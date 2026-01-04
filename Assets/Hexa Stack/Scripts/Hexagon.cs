@@ -44,15 +44,26 @@ public class Hexagon : MonoBehaviour
 
         float delay = transform.GetSiblingIndex() * .023f;
 
+        // 애니메이션 완료 후 정확한 위치로 보정하여 어긋남 방지
         LeanTween.moveLocal(gameObject, targetLocalPos, .4615f)
             .setEase(LeanTweenType.easeInOutSine)
-            .setDelay(delay);
+            .setDelay(delay)
+            .setOnComplete(() => {
+                // 애니메이션 완료 후 정확한 위치로 강제 설정
+                transform.localPosition = targetLocalPos;
+                // 회전도 초기화
+                transform.localRotation = Quaternion.identity;
+            });
 
         Vector3 direction = (targetLocalPos - transform.localPosition).With(y: 0).normalized;
         Vector3 rotationAxis = Vector3.Cross(Vector3.up, direction);
 
         LeanTween.rotateAround(gameObject, rotationAxis, 180, .4615f)
             .setEase(LeanTweenType.easeInOutSine)
-            .setDelay(delay);
+            .setDelay(delay)
+            .setOnComplete(() => {
+                // 회전 애니메이션 완료 후 정확한 회전으로 보정
+                transform.localRotation = Quaternion.identity;
+            });
     }
 }

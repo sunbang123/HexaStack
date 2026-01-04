@@ -63,59 +63,59 @@ public class StackController : MonoBehaviour
 
     private void ManageMouseDrag()
     {
-        RaycastHit hit;
-        Physics.Raycast(GetClickedRay(), out hit, 500, gridHexagonLayerMask);
+        // 먼저 그라운드 레이캐스트로 마우스 위치 확인
+        RaycastHit groundHit;
+        Physics.Raycast(GetClickedRay(), out groundHit, 500, groundLayerMask);
 
-        if (hit.collider == null)
-            DraggingAboveGround();
-        else
-            DraggingAboveGridCell(hit);
-    }
-
-    private void DraggingAboveGround()
-    {
-        RaycastHit hit;
-        Physics.Raycast(GetClickedRay(), out hit, 500, groundLayerMask);
-
-        if(hit.collider == null)
+        if (groundHit.collider == null)
         {
             Debug.LogError("No ground detected, this is unusual...");
             return;
         }
 
-        Vector3 currentStackTargetPos = hit.point.With(y: currentStackInitialPos.y);
+        // 마우스 위치를 부드럽게 따라가도록 함
+        Vector3 mouseWorldPos = groundHit.point.With(y: currentStackInitialPos.y);
+        currentStack.transform.position = Vector3.Lerp(
+            currentStack.transform.position,
+            mouseWorldPos,
+            Time.deltaTime * 20f);
 
-        // 마우스 위치에 즉시 따라가도록 변경
-        currentStack.transform.position = currentStackTargetPos;
+        // 가장 가까운 그리드 셀 찾기
+        RaycastHit gridHit;
+        Physics.Raycast(GetClickedRay(), out gridHit, 500, gridHexagonLayerMask);
 
-        ClearPreview();
-        targetCell = null;
-    }
-
-    private void DraggingAboveGridCell(RaycastHit hit)
-    {
-        GridCell gridCell = hit.collider.GetComponent<GridCell>();
-
-        if (gridCell.IsOccupied)
-            DraggingAboveGround();
+        if (gridHit.collider != null)
+        {
+            GridCell gridCell = gridHit.collider.GetComponent<GridCell>();
+            UpdateGridCellPreview(gridCell);
+        }
         else
-            DraggingAboveNonOccupiedGridCell(gridCell);
-    }
-
-    private void DraggingAboveNonOccupiedGridCell(GridCell gridCell)
-    {
-        Vector3 currentStackTargetPos = gridCell.transform.position.With(y: 2);
-
-        // 마우스 위치에 즉시 따라가도록 변경
-        currentStack.transform.position = currentStackTargetPos;
-
-        if (targetCell != gridCell)
         {
             ClearPreview();
-            targetCell = gridCell;
-            ShowPreview(gridCell);
+            targetCell = null;
         }
     }
+
+    private void UpdateGridCellPreview(GridCell gridCell)
+    {
+        // 빈 자리일 때만 preview 표시 및 배치 가능
+        if (!gridCell.IsOccupied)
+        {
+            if (targetCell != gridCell)
+            {
+                ClearPreview();
+                targetCell = gridCell;
+                ShowPreview(gridCell);
+            }
+        }
+        else
+        {
+            // occupied된 셀 위에서는 preview 제거 및 배치 불가
+            ClearPreview();
+            targetCell = null;
+        }
+    }
+
 
     private void ManageMouseUp()
     {

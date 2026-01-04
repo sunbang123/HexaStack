@@ -86,6 +86,9 @@ public class MergeManager : MonoBehaviour
 
         yield return new WaitForSeconds(.4615f + (hexagonsToAdd.Count + 1) * .023f);
 
+        // 애니메이션 완료 후 모든 헥사곤 위치를 정확하게 재정렬
+        ReorganizeStack(gridCell);
+
         // We need to merge!
 
         // Merge everything inside of this cell
@@ -193,6 +196,24 @@ public class MergeManager : MonoBehaviour
 
             gridCell.Stack.Add(hexagon);
             hexagon.MoveToLocal(targetLocalPosition);
+        }
+    }
+
+    // 스택의 모든 헥사곤 위치를 정확하게 재정렬
+    private void ReorganizeStack(GridCell gridCell)
+    {
+        if (gridCell.Stack == null || gridCell.Stack.Hexagons == null)
+            return;
+
+        for (int i = 0; i < gridCell.Stack.Hexagons.Count; i++)
+        {
+            Hexagon hexagon = gridCell.Stack.Hexagons[i];
+            if (hexagon != null)
+            {
+                Vector3 targetLocalPosition = Vector3.up * i * .2f;
+                hexagon.transform.localPosition = targetLocalPosition;
+                hexagon.transform.localRotation = Quaternion.identity;
+            }
         }
     }
 
