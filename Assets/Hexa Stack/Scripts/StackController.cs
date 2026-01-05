@@ -12,6 +12,9 @@ public class StackController : MonoBehaviour
     private HexStack currentStack;
     private Vector3 currentStackInitialPos;
 
+    public static bool IsDragging => Instance != null && Instance.currentStack != null;
+    private static StackController Instance;
+
     [Header(" Data ")]
     private GridCell targetCell;
     private GridCell previousTargetCell;
@@ -24,7 +27,7 @@ public class StackController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Instance = this;
     }
 
     // Update is called once per frame
