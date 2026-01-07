@@ -84,7 +84,7 @@ public class GridRotator : MonoBehaviour
         float distanceFromCenter = GetDistanceFromCenter();
         float dampedAngle = ApplyDistanceDamping(angleDelta, distanceFromCenter);
         
-        float rotationAmount = -dampedAngle * rotationSpeed;
+        float rotationAmount = dampedAngle * rotationSpeed;
         gridGenerator.Rotate(0, rotationAmount, 0, Space.World);
         
         lastAngle = currentAngle;
