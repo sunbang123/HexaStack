@@ -11,6 +11,14 @@ public class MergeManager : MonoBehaviour
     [Header("UI Elements")]
     public TMP_Text scoreText; // Reference to the TMP_Text element
 
+    [Header("Break Effect")]
+    [SerializeField] private SpriteRenderer breakImagePrefab;
+    [SerializeField] private Camera cameraUI;
+    [SerializeField] private Transform scoreTargetPosition; // 점수 UI 위치 (이펙트가 날아갈 목적지)
+
+    [Header("Score Effect")]
+    [SerializeField] private GameObject increaseScoreEffectPrefab; // 점수 업데이트 시 터지는 콘페티 이펙트
+
     private int score = 0; // Initialize score
 
     private void Awake()
@@ -100,6 +108,14 @@ public class MergeManager : MonoBehaviour
         // Update the score after a successful merge
         score++;
         UpdateScoreText();
+        
+        // 일반 merge가 성공했을 때도 IncreaseScoreEffect 표시 (Ground 위치에서)
+        if (increaseScoreEffectPrefab != null)
+        {
+            Vector3 groundPosition = gridCell.transform.position.With(y: 0.7f);
+            StartCoroutine(SpawnIncreaseScoreEffect(groundPosition));
+        }
+        
         AreMovesAvailable();
 
         // Check the updated cells
@@ -259,6 +275,126 @@ public class MergeManager : MonoBehaviour
         updatedCells.Add(gridCell);
 
         yield return new WaitForSeconds(.4615f + (similarHexagonCount + 1) * .023f);
+
+        // BreakImage 이펙트 생성 및 점수 UI로 날아가는 애니메이션
+        yield return StartCoroutine(SpawnBreakEffect(gridCell.transform.position, topColor, similarHexagonCount));
+    }
+
+    private IEnumerator SpawnBreakEffect(Vector3 worldPosition, Color color, int hexagonCount)
+    {
+        if (breakImagePrefab == null || cameraUI == null)
+            yield break;
+
+        // 월드 좌표를 스크린 좌표로 변환 후 UI 카메라의 월드 좌표로 변환
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPosition);
+        screenPos.z = 10f; // UI 카메라 앞에 배치
+        Vector3 uiWorldPos = cameraUI.ScreenToWorldPoint(screenPos);
+
+        // BreakImage 인스턴스 생성
+        SpriteRenderer breakImage = Instantiate(breakImagePrefab, uiWorldPos, Quaternion.identity);
+        breakImage.color = color;
+
+        // TrailRenderer가 있다면 색상 설정
+        TrailRenderer trail = breakImage.GetComponent<TrailRenderer>();
+        if (trail != null)
+        {
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new GradientColorKey[] { new GradientColorKey(color, 0f), new GradientColorKey(color, 1f) },
+                new GradientAlphaKey[] { new GradientAlphaKey(0.5f, 0.0f), new GradientAlphaKey(0f, 1.0f) }
+            );
+            trail.colorGradient = gradient;
+        }
+
+        // 이동 경로 설정 (곡선 경로)
+        List<Vector3> points = new List<Vector3>();
+        points.Add(uiWorldPos);
+
+        // 랜덤하게 좌우로 휘어지는 경로
+        int direction = Random.Range(0, 2) == 0 ? -1 : 1;
+        Vector3 midPoint1 = uiWorldPos + new Vector3(1f * direction, 0f, 0f);
+        points.Add(midPoint1);
+        Vector3 midPoint2 = midPoint1 + new Vector3(0f, 1f, 0f);
+        points.Add(midPoint2);
+
+        // 목적지 (점수 UI 위치)
+        Vector3 targetPos;
+        if (scoreTargetPosition != null)
+        {
+            targetPos = scoreTargetPosition.position;
+        }
+        else if (scoreText != null)
+        {
+            targetPos = scoreText.transform.position;
+        }
+        else
+        {
+            // 기본값: 화면 상단 중앙
+            targetPos = cameraUI.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height - 100f, 10f));
+        }
+        points.Add(targetPos);
+
+        yield return null;
+
+        // LeanTween으로 곡선 경로를 따라 이동
+        LeanTween.move(breakImage.gameObject, points.ToArray(), 0.5f)
+            .setOnComplete(() =>
+            {
+                // 점수 추가
+                score += hexagonCount;
+                UpdateScoreText();
+                
+                // IncreaseScoreEffect 이펙트 생성 (Ground 위치에서 콘페티 터지는 효과)
+                // BreakImage의 원래 시작 위치(월드 좌표)를 Ground 위치로 사용
+                if (increaseScoreEffectPrefab != null)
+                {
+                    Vector3 groundPosition = worldPosition.With(y: 0.7f);
+                    StartCoroutine(SpawnIncreaseScoreEffect(groundPosition));
+                }
+                
+                // BreakImage 이펙트 오브젝트 삭제
+                Destroy(breakImage.gameObject);
+            });
+    }
+
+    private Vector3 GetScoreUIPosition()
+    {
+        // 점수 UI 위치 가져오기
+        if (scoreTargetPosition != null)
+        {
+            return scoreTargetPosition.position;
+        }
+        else if (scoreText != null)
+        {
+            return scoreText.transform.position;
+        }
+        else if (cameraUI != null)
+        {
+            // 기본값: 화면 상단 중앙
+            return cameraUI.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height - 100f, 10f));
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
+
+    private IEnumerator SpawnIncreaseScoreEffect(Vector3 position)
+    {
+        if (increaseScoreEffectPrefab == null)
+            yield break;
+
+        // IncreaseScoreEffect 인스턴스 생성 (콘페티 파티클 이펙트)
+        GameObject increaseScoreFX = Instantiate(increaseScoreEffectPrefab, position, Quaternion.identity);
+        
+        // 파티클 시스템이 자동으로 재생됨 (프리팹 설정에 따라)
+        // 1초 후 이펙트 오브젝트 삭제
+        yield return new WaitForSeconds(1f);
+        
+        if (increaseScoreFX != null)
+        {
+            Destroy(increaseScoreFX);
+        }
     }
 
     private void UpdateScoreText()

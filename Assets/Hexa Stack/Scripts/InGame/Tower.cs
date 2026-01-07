@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Renderer))]
 public class Tower : MonoBehaviour
@@ -26,7 +27,10 @@ public class Tower : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        bool mouseHeld = Mouse.current != null && Mouse.current.leftButton.isPressed;
+        bool touchHeld = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed;
+        
+        if (mouseHeld || touchHeld)
             Fill();
     }
 

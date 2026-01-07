@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class StackController : MonoBehaviour
 {
@@ -38,11 +39,20 @@ public class StackController : MonoBehaviour
 
     private void ManageControl()
     {
-        if (Input.GetMouseButtonDown(0))
+        bool mouseDown = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        bool mouseHeld = Mouse.current != null && Mouse.current.leftButton.isPressed;
+        bool mouseUp = Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame;
+        
+        // 터치 입력도 지원
+        bool touchDown = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
+        bool touchHeld = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed;
+        bool touchUp = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasReleasedThisFrame;
+
+        if (mouseDown || touchDown)
             ManageMouseDown();
-        else if (Input.GetMouseButton(0) && currentStack != null)
+        else if ((mouseHeld || touchHeld) && currentStack != null)
             ManageMouseDrag();
-        else if (Input.GetMouseButtonUp(0) && currentStack != null)
+        else if ((mouseUp || touchUp) && currentStack != null)
             ManageMouseUp();
     }
 
@@ -145,7 +155,24 @@ public class StackController : MonoBehaviour
     }
 
 
-    private Ray GetClickedRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
+    private Ray GetClickedRay()
+    {
+        Vector2 screenPos = GetInputPosition();
+        return Camera.main.ScreenPointToRay(screenPos);
+    }
+
+    private Vector2 GetInputPosition()
+    {
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            return Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+        else if (Mouse.current != null)
+        {
+            return Mouse.current.position.ReadValue();
+        }
+        return Vector2.zero;
+    }
 
     private void ShowPreview(GridCell gridCell)
     {

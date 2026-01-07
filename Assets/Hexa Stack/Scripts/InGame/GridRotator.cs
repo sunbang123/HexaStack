@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GridRotator : MonoBehaviour
 {
@@ -49,15 +50,24 @@ public class GridRotator : MonoBehaviour
 
     private void HandleRotationInput()
     {
-        if (Input.GetMouseButtonDown(0))
+        bool mouseDown = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        bool mouseHeld = Mouse.current != null && Mouse.current.leftButton.isPressed;
+        bool mouseUp = Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame;
+        
+        // 터치 입력도 지원
+        bool touchDown = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
+        bool touchHeld = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed;
+        bool touchUp = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasReleasedThisFrame;
+
+        if (mouseDown || touchDown)
         {
             StartRotation();
         }
-        else if (Input.GetMouseButton(0) && isRotating)
+        else if ((mouseHeld || touchHeld) && isRotating)
         {
             UpdateRotation();
         }
-        else if (Input.GetMouseButtonUp(0))
+        else if (mouseUp || touchUp)
         {
             if (isRotating)
             {
@@ -93,7 +103,8 @@ public class GridRotator : MonoBehaviour
     private float CalculateMouseAngle()
     {
         Vector2 screenCenter = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-        Vector2 mouseDirection = (Vector2)Input.mousePosition - screenCenter;
+        Vector2 inputPosition = GetInputPosition();
+        Vector2 mouseDirection = inputPosition - screenCenter;
         
         return Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
     }
@@ -101,7 +112,21 @@ public class GridRotator : MonoBehaviour
     private float GetDistanceFromCenter()
     {
         Vector2 screenCenter = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-        return Vector2.Distance(Input.mousePosition, screenCenter);
+        Vector2 inputPosition = GetInputPosition();
+        return Vector2.Distance(inputPosition, screenCenter);
+    }
+
+    private Vector2 GetInputPosition()
+    {
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            return Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+        else if (Mouse.current != null)
+        {
+            return Mouse.current.position.ReadValue();
+        }
+        return Vector2.zero;
     }
 
     private float ApplyDistanceDamping(float angleDelta, float distance)
