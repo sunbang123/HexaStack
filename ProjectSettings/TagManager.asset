@@ -8,13 +8,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Logo
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Background
+  - Effect
+  - Ground
+  - Grid
   - 
   - 
   - 
