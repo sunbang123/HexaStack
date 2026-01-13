@@ -6,11 +6,15 @@ public class LogoAnimation : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform stackPositionsParent; // "Stack Positions" 부모 오브젝트
+    [SerializeField] private Transform bootsLogoPosition;
 
     [Header("Settings")]
     [SerializeField] private float moveInterval = 2f; // 이동 간격 (초)
     [SerializeField] private bool autoStart = true; // 자동 시작 여부
     [SerializeField] private bool loop = true; // 반복 여부
+
+    [Header("Continuous Rotation")]
+    [SerializeField] private float rotationSpeed = 50f; // 초당 회전 각도
 
     [Header("Animation Settings")]
     [SerializeField] private float animationDuration = 0.4615f; // 애니메이션 지속 시간
@@ -38,6 +42,14 @@ public class LogoAnimation : MonoBehaviour
         if (autoStart)
         {
             StartAnimation();
+        }
+    }
+
+    private void Update()
+    {
+        if (bootsLogoPosition != null)
+        {
+            bootsLogoPosition.Rotate(Vector3.down, rotationSpeed * Time.deltaTime);
         }
     }
 
