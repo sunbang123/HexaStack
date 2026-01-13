@@ -89,7 +89,7 @@ namespace HexaStack.Controllers
         }
 
         // 마우스 위치를 부드럽게 따라가도록 함
-        Vector3 mouseWorldPos = groundHit.point.With(y: currentStackInitialPos.y + 0.5f);
+        Vector3 mouseWorldPos = groundHit.point.With(y: currentStackInitialPos.y + 1.5f);
         currentStack.transform.position = Vector3.Lerp(
             currentStack.transform.position,
             mouseWorldPos,

@@ -315,9 +315,9 @@ namespace HexaStack.Controllers
 
         // 랜덤하게 좌우로 휘어지는 경로
         int direction = Random.Range(0, 2) == 0 ? -1 : 1;
-        Vector3 midPoint1 = uiWorldPos + new Vector3(1f * direction, 0f, 0f);
+        Vector3 midPoint1 = uiWorldPos + new Vector3(0.5f * direction, 0f, 0f);
         points.Add(midPoint1);
-        Vector3 midPoint2 = midPoint1 + new Vector3(0f, 1f, 0f);
+        Vector3 midPoint2 = midPoint1 + new Vector3(0f, 0.5f, 0f);
         points.Add(midPoint2);
 
         // 목적지 (점수 UI 위치)
@@ -346,15 +346,7 @@ namespace HexaStack.Controllers
                 // 점수 추가
                 score += hexagonCount;
                 UpdateScoreText();
-                
-                // IncreaseScoreEffect 이펙트 생성 (Ground 위치에서 콘페티 터지는 효과)
-                // BreakImage의 원래 시작 위치(월드 좌표)를 Ground 위치로 사용
-                if (increaseScoreEffectPrefab != null)
-                {
-                    Vector3 groundPosition = worldPosition.With(y: 0.7f);
-                    StartCoroutine(SpawnIncreaseScoreEffect(groundPosition));
-                }
-                
+                                
                 // BreakImage 이펙트 오브젝트 삭제
                 Destroy(breakImage.gameObject);
             });
