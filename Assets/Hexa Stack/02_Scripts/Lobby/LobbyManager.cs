@@ -29,6 +29,12 @@ namespace HexaStack.Controllers.Managers
             {
                 Logger.LogError("SceneLoader가 씬에 없습니다! BootScene부터 시작했나요?");
             }
+
+            // 로비에 진입하자마자 로비 BGM 재생 명령!
+            if (!object.ReferenceEquals(AudioManager.Instance, null))
+            {
+                AudioManager.Instance.PlayBGM(BGM.Lobby);
+            }
         }
     }
 }

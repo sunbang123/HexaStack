@@ -177,8 +177,13 @@ MonoBehaviour:
   m_IsDestroyOnLoad: 0
   m_BGMSource: {fileID: 4962546442509915700}
   m_SFXSource: {fileID: 3500423426093173255}
-  m_BGMClips: []
-  m_SFXClips: []
+  m_BGMClips:
+  - {fileID: 8300000, guid: 1d76ced58c9dfd1409be5593199be183, type: 3}
+  - {fileID: 8300000, guid: fe1dbe71487f30446840c88c6b964c6d, type: 3}
+  m_SFXClips:
+  - {fileID: 8300000, guid: 0bbacdd1f100cf042b82a1151a6262bb, type: 3}
+  - {fileID: 8300000, guid: 169009c52ce575d4a87e57bb0871e55f, type: 3}
+  - {fileID: 8300000, guid: 8aab7ed4f7cc34f468c6f32942453f58, type: 3}
 --- !u!1 &8132534299511274729
 GameObject:
   m_ObjectHideFlags: 0

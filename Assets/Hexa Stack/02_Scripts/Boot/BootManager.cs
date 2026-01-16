@@ -14,9 +14,14 @@ namespace HexaStack.Scenes.Boot
         [Header("Global Managers (Prefabs)")]
         [SerializeField] private SceneLoader _sceneLoaderPrefab;
         [SerializeField] private AudioManager _audioManagerPrefab;
+        [SerializeField] private UIManager _uiManagerPrefab;
 
         [Header("Global Systems (Prefabs)")]
         [SerializeField] private GameObject _eventSystemPrefab;
+
+        [Header("Global UI Prefabs (For UIManager Registration)")]
+        [SerializeField] private Views.OptionPopup _optionPopupPrefab;
+        [SerializeField] private Views.NoticePopup _noticePopupPrefab;
 
         private void Start()
         {
@@ -27,7 +32,6 @@ namespace HexaStack.Scenes.Boot
 
         private void InitializeGlobalSystems()
         {
-            // SingletonBehaviour 덕분에 .Instance 호출만으로도 체크 가능!
             if (object.ReferenceEquals(GlobalEventSystem.Instance, null))
             {
                 if (_eventSystemPrefab != null)
@@ -38,16 +42,23 @@ namespace HexaStack.Scenes.Boot
                     Logger.Log("[Boot] GlobalEventSystem Created.");
                 }
             }
+
+            // B. UIManager 생성 및 범용 UI 등록
+            if (object.ReferenceEquals(UIManager.Instance, null))
+            {
+                if (_uiManagerPrefab != null)
+                {
+                    Instantiate(_uiManagerPrefab);
+                    Logger.Log("[Boot] UIManager Created.");
+
+                    // 제네릭 등록: 타입 안정성 확보 및 마샬링 우회
+                    UIManager.Instance.RegisterPrefab<Views.OptionPopup>(_optionPopupPrefab);
+                    UIManager.Instance.RegisterPrefab<Views.NoticePopup>(_noticePopupPrefab);
+                }
+            }
         }
         private void InitializeGlobalManagers()
         {
-            // ✨ [Pro Level Optimization]
-            // "유니티 엔진아, SceneLoader 죽었니?" (X - 마샬링 발생)
-            // "C# 변수야, 너 지금 비어있니?" (O - 마샬링 Zero)
-
-            // 1. SceneLoader 생성 체크
-            // .Instance 프로퍼티가 static 변수를 반환한다고 가정할 때,
-            // 초기화 여부만 따지므로 ReferenceEquals가 가장 빠름.
             if (object.ReferenceEquals(SceneLoader.Instance, null))
             {
                 // 프리팹은 유니티 오브젝트니까 Unity Null Check (안정성)
@@ -75,12 +86,8 @@ namespace HexaStack.Scenes.Boot
         {
             Logger.Log("[BootManager] System Initialized. Waiting for logo display...");
 
-            // WaitForSeconds도 'new' 할 때 가비지가 생김.
-            // 극한의 최적화를 원한다면 캐싱해서 쓸 수 있지만,
-            // Boot는 딱 1번 실행되므로 이 정도는 쿨하게 넘어가도 됨. (애자일!)
             yield return new WaitForSeconds(_logoDisplayTime);
 
-            // 안전장치: 여기도 ReferenceEquals 가능
             if (object.ReferenceEquals(SceneLoader.Instance, null)) yield break;
 
             SceneLoader.Instance.LoadScene(SceneType.Lobby);

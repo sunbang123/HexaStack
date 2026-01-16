@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using HexaStack.Views;
 using HexaStack.Controllers;
@@ -10,14 +8,18 @@ namespace HexaStack.Controllers.Managers
 {
     public class InGameManager : SingletonBehaviour<InGameManager>
     {
-        public InGameUIController InGameUIController { get; private set; }
-        public MergeController MergeController { get; private set; }
-        public StackSpawnerController StackSpawnerController { get; private set; }
+        [Header("Scene Controllers (Drag & Drop)")]
+        [SerializeField] private InGameUIController _inGameUI;
+        [SerializeField] private MergeController _mergeController;
+        [SerializeField] private StackSpawnerController _stackSpawner;
+
+        public InGameUIController InGameUIController => _inGameUI;
+        public MergeController MergeController => _mergeController;
+        public StackSpawnerController StackSpawnerController => _stackSpawner;
 
         protected override void Init()
         {
-            m_IsDestroyOnLoad = true;
-
+            m_IsDestroyOnLoad = false; 
             base.Init();
         }
 
@@ -28,18 +30,20 @@ namespace HexaStack.Controllers.Managers
 
         private void InitializeControllers()
         {
-            InGameUIController = FindObjectOfType<InGameUIController>();
-            if (!InGameUIController)
+            if (!object.ReferenceEquals(_inGameUI, null))
             {
-                Logger.Log("InGameUIController does not exist.");
+                _inGameUI.Init();
             }
             else
             {
-                InGameUIController.Init();
+                Logger.LogWarning("InGameUIController is missing in Inspector.");
             }
 
-            MergeController = FindObjectOfType<MergeController>();
-            StackSpawnerController = FindObjectOfType<StackSpawnerController>();
+            var audio = AudioManager.Instance;
+            if (!object.ReferenceEquals(audio, null))
+            {
+                audio.PlayBGM(BGM.InGame);
+            }
         }
     }
 }

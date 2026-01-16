@@ -18,6 +18,15 @@ namespace HexaStack.Views
         public void OnClickSettingsBtn()
         {
             Logger.Log($"{GetType()}::OnClickSettingsBtn");
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.OpenUI<OptionPopup>(null);
+            }
+            else
+            {
+                Logger.LogError("UIManager Instance를 찾을 수 없습니다!");
+            }
         }
 
         public void OnClickProfileBtn()
@@ -35,7 +44,10 @@ namespace HexaStack.Views
             Logger.Log($"{GetType()}::OnClickStartBtn");
 
             if (!System.Object.ReferenceEquals(SceneLoader.Instance, null))
-                SceneLoader.Instance.LoadScene(SceneType.InGame);
+            {
+                var startData = new InGameSceneData(1, false);
+                SceneLoader.Instance.LoadScene(SceneType.InGame, startData);
+            }
         }
     }
 }

@@ -12,10 +12,18 @@ namespace HexaStack.Views
         public void Init()
         {
         }
-
         public void OnClickSettingsBtn()
         {
             Logger.Log($"{GetType()}::OnClickSettingsBtn");
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.OpenUI<OptionPopup>(null);
+            }
+            else
+            {
+                Logger.LogError("UIManager Instance를 찾을 수 없습니다!");
+            }
         }
 
         public void OnClickProfileBtn()
