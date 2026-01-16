@@ -25,7 +25,7 @@ namespace HexaStack.Core
             Logger.Log($"{sceneType} scene loading...");
 
             Time.timeScale = 1f;
-            SceneManager.LoadScene(sceneType.ToString());
+            SceneManager.LoadScene((int)sceneType);
         }
 
         public void ReloadScene()
@@ -44,7 +44,7 @@ namespace HexaStack.Core
             Logger.Log($"{sceneType} scene loading asynchronously...");
 
             Time.timeScale = 1f;
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneType.ToString());
+            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync((int)sceneType);
             asyncOperation.allowSceneActivation = false; // 자동 활성화 방지
             
             return asyncOperation;
