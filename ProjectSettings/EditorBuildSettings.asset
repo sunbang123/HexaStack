@@ -6,7 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Hexa Stack/01_Scenes/BootScene.unity
+    path: Assets/Hexa Stack/01_Scenes/Boot.unity
+    guid: b7330c31d4f40dc449bff50fba0507a0
+  - enabled: 1
+    path: Assets/Hexa Stack/01_Scenes/Loading.unity
     guid: 7ae13164e98a72241a7346351328f1bb
   - enabled: 1
     path: Assets/Hexa Stack/01_Scenes/Lobby.unity

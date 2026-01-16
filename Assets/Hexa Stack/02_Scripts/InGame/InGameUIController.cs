@@ -30,9 +30,8 @@ namespace HexaStack.Views
 
         public void OnClickLobbyBtn()
         {
-            Logger.Log($"{GetType()}::OnClickStartBtn");
-
-            InGameManager.Instance.GoToLobby();
+            if (!System.Object.ReferenceEquals(SceneLoader.Instance, null))
+                SceneLoader.Instance.LoadScene(SceneType.Lobby);
         }
     }
 }

@@ -34,7 +34,8 @@ namespace HexaStack.Views
         {
             Logger.Log($"{GetType()}::OnClickStartBtn");
 
-            LobbyManager.Instance.StartInGame();
+            if (!System.Object.ReferenceEquals(SceneLoader.Instance, null))
+                SceneLoader.Instance.LoadScene(SceneType.InGame);
         }
     }
 }

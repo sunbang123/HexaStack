@@ -6,7 +6,7 @@ using Logger = HexaStack.Core.Logger;
 
 namespace HexaStack.Views
 {
-    public class BootUIController : MonoBehaviour
+    public class LoadingUIController : MonoBehaviour
     {
         [Header("Loading Bar")]
         [SerializeField] private Slider loadingBar;

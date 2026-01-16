@@ -41,18 +41,5 @@ namespace HexaStack.Controllers.Managers
             MergeController = FindObjectOfType<MergeController>();
             StackSpawnerController = FindObjectOfType<StackSpawnerController>();
         }
-
-        public void GoToLobby()
-        {
-            if (SceneLoader.Instance == null)
-            {
-                Logger.LogError("SceneLoader.Instance is null. Creating new SceneLoader...");
-                // SceneLoader가 없으면 생성
-                GameObject sceneLoaderObj = new GameObject("SceneLoader");
-                sceneLoaderObj.AddComponent<SceneLoader>();
-            }
-
-            SceneLoader.Instance.LoadScene(SceneType.Lobby);
-        }
     }
 }

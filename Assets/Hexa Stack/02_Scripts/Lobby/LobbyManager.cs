@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using HexaStack.Views;
 using HexaStack.Core;
@@ -7,40 +5,30 @@ using Logger = HexaStack.Core.Logger;
 
 namespace HexaStack.Controllers.Managers
 {
-    public class LobbyManager : SingletonBehaviour<LobbyManager>
+    // 로비에서만 살면 되니까 가볍게 가자!
+    public class LobbyManager : MonoBehaviour
     {
-        public LobbyUIController LobbyUIController { get; private set; }
-
-        protected override void Init()
-        {
-            m_IsDestroyOnLoad = true;
-            
-            base.Init();
-        }
+        [Header("Scene Components")]
+        // [변경] Find 대신 직접 연결! (마샬링 0)
+        [SerializeField] private LobbyUIController _lobbyUIController;
 
         private void Start()
         {
-            LobbyUIController = FindObjectOfType<LobbyUIController>();
-            if(!LobbyUIController)
+            // 1. UI 초기화 (ReferenceEquals로 안전하게 체크)
+            if (!object.ReferenceEquals(_lobbyUIController, null))
             {
-                Logger.Log("LobbyUIController does not exist.");
-                return;
+                _lobbyUIController.Init();
+            }
+            else
+            {
+                Logger.LogWarning("LobbyUIController is not assigned in Inspector.");
             }
 
-            LobbyUIController.Init();
-        }
-
-        public void StartInGame()
-        {
-            if (SceneLoader.Instance == null)
+            // 전역 매니저들이 잘 있는지 체크 (개발용 로그)
+            if (object.ReferenceEquals(SceneLoader.Instance, null))
             {
-                Logger.LogError("SceneLoader.Instance is null. Creating new SceneLoader...");
-                // SceneLoader가 없으면 생성
-                GameObject sceneLoaderObj = new GameObject("SceneLoader");
-                sceneLoaderObj.AddComponent<SceneLoader>();
+                Logger.LogError("SceneLoader가 씬에 없습니다! BootScene부터 시작했나요?");
             }
-
-            SceneLoader.Instance.LoadScene(SceneType.InGame);
         }
     }
 }

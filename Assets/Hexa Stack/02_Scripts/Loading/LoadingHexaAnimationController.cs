@@ -10,7 +10,7 @@ namespace HexaStack.Views
     /// BootScene에서 사용할 화려한 Hexa 애니메이션 컨트롤러
     /// 헥사곤이 위에서 떨어져 차곡차곡 쌓이는 애니메이션
     /// </summary>
-    public class BootHexaAnimationController : MonoBehaviour
+    public class LoadingHexaAnimationController : MonoBehaviour
     {
         [Header("Elements")]
         [SerializeField] private Hexagon hexagonPrefab;
