@@ -30,10 +30,15 @@ namespace HexaStack.Core
 
         public void ReloadScene()
         {
-            Logger.Log($"{SceneManager.GetActiveScene().name} scene loading...");
+            // 1. 현재 씬의 인덱스(int)를 가져옴 (비용 0)
+            int currentIndex = SceneManager.GetActiveScene().buildIndex;
+
+            Logger.Log($"Reloading Scene Index: {currentIndex}"); // 로그는 개발용이니 패스
 
             Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+            // 2. 인덱스로 즉시 로드 (최적화!)
+            SceneManager.LoadScene(currentIndex);
         }
 
         /// <summary>
