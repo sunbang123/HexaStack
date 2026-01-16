@@ -226,7 +226,7 @@ MonoBehaviour:
   _logoDisplayTime: 1.5
   _sceneLoaderPrefab: {fileID: 7701341641726940222, guid: 12cabb94f7311b949a9bb74eeb091327, type: 3}
   _audioManagerPrefab: {fileID: 1437432524300062393, guid: f97c608e471a0d94fbb8dbbdccee7779, type: 3}
-  _eventSystemPrefab: {fileID: 0}
+  _eventSystemPrefab: {fileID: 6993204249548877853, guid: 80b7f58bf77e7d34ab68558343b0fe35, type: 3}
 --- !u!1 &689223120
 GameObject:
   m_ObjectHideFlags: 0

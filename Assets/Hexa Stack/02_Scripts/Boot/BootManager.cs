@@ -20,8 +20,24 @@ namespace HexaStack.Scenes.Boot
 
         private void Start()
         {
+            InitializeGlobalSystems();
             InitializeGlobalManagers();
             StartCoroutine(SplashProcess());
+        }
+
+        private void InitializeGlobalSystems()
+        {
+            // SingletonBehaviour 덕분에 .Instance 호출만으로도 체크 가능!
+            if (object.ReferenceEquals(GlobalEventSystem.Instance, null))
+            {
+                if (_eventSystemPrefab != null)
+                {
+                    // 여기서 Instantiate 하면 GlobalEventSystem의 Init()이 돌면서 
+                    // DontDestroyOnLoad까지 한 방에 해결됨!
+                    Instantiate(_eventSystemPrefab);
+                    Logger.Log("[Boot] GlobalEventSystem Created.");
+                }
+            }
         }
         private void InitializeGlobalManagers()
         {
