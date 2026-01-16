@@ -1819,7 +1819,7 @@ GameObject:
   m_Component:
   - component: {fileID: 749167880}
   m_Layer: 0
-  m_Name: --- GAMEPLAY ---
+  m_Name: --- GRID ---
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2584,7 +2584,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1010166494}
   m_Layer: 0
-  m_Name: --- GAMEMANAGERS ---
+  m_Name: --- UTILS ---
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3750,6 +3750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0b58e3fd3731846868a30babd07770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_IsDestroyOnLoad: 0
 --- !u!1001 &1347972891
 PrefabInstance:
   m_ObjectHideFlags: 0
