@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
-
-#if UNITY_EDITOR
 using UnityEditor;
 
 namespace HexaStack.Controllers
 {
     public class GridGeneratorController : MonoBehaviour
     {
-        [Header(" Elements ")]
+ 
+       [Header(" Elements ")]
         [SerializeField] private Grid grid;
         [SerializeField] private GameObject hexagon;
 
@@ -56,7 +55,7 @@ namespace HexaStack.Controllers
                             qDirection * q * width +
                             sDirection * s * width;
 
-                        GameObject gridHexInstance = (GameObject)PrefabUtility.InstantiatePrefab(hexagon);
+                        GameObject gridHexInstance = Instantiate(hexagon);
                         gridHexInstance.transform.position = spawnPos;
                         gridHexInstance.transform.rotation = Quaternion.identity;
                         gridHexInstance.transform.SetParent(transform);
@@ -76,4 +75,3 @@ namespace HexaStack.Controllers
         }
     }
 }
-#endif

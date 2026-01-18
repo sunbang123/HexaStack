@@ -5,16 +5,19 @@ using Logger = HexaStack.Core.Logger;
 
 namespace HexaStack.Controllers.Managers
 {
-    // 로비에서만 살면 되니까 가볍게 가자!
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : SingletonBehaviour<LobbyManager>
     {
         [Header("Scene Components")]
-        // [변경] Find 대신 직접 연결! (마샬링 0)
         [SerializeField] private LobbyUIController _lobbyUIController;
+
+        protected override void Init()
+        {
+            m_IsDestroyOnLoad = true; 
+            base.Init();
+        }
 
         private void Start()
         {
-            // 1. UI 초기화 (ReferenceEquals로 안전하게 체크)
             if (!object.ReferenceEquals(_lobbyUIController, null))
             {
                 _lobbyUIController.Init();
@@ -24,16 +27,15 @@ namespace HexaStack.Controllers.Managers
                 Logger.LogWarning("LobbyUIController is not assigned in Inspector.");
             }
 
-            // 전역 매니저들이 잘 있는지 체크 (개발용 로그)
             if (object.ReferenceEquals(SceneLoader.Instance, null))
             {
-                Logger.LogError("SceneLoader가 씬에 없습니다! BootScene부터 시작했나요?");
+                Logger.LogError("SceneLoader가 없습니다.");
             }
 
-            // 로비에 진입하자마자 로비 BGM 재생 명령!
-            if (!object.ReferenceEquals(AudioManager.Instance, null))
+            var audio = AudioManager.Instance;
+            if (!object.ReferenceEquals(audio, null))
             {
-                AudioManager.Instance.PlayBGM(BGM.Lobby);
+                audio.PlayBGM(BGM.Lobby);
             }
         }
     }

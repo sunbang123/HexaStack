@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f23b336e4d9cc4da459e3efdcd10e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_IsDestroyOnLoad: 0
   _lobbyUIController: {fileID: 1979908925}
 --- !u!1 &277524717
 GameObject:
@@ -5312,7 +5313,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 360, y: 740}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

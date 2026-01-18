@@ -54,6 +54,24 @@ namespace HexaStack.Core
             m_IsDestroyOnLoad = false;
         }
 
+        /// <summary>
+        /// BGM 볼륨 (0.0 ~ 1.0) 읽기/쓰기
+        /// </summary>
+        public float BGMVolume
+        {
+            get => m_BGMSource.volume;
+            set => m_BGMSource.volume = Mathf.Clamp01(value);
+        }
+
+        /// <summary>
+        /// SFX 볼륨 (0.0 ~ 1.0) 읽기/쓰기
+        /// </summary>
+        public float SFXVolume
+        {
+            get => m_SFXSource.volume;
+            set => m_SFXSource.volume = Mathf.Clamp01(value);
+        }
+
         #region BGM Logic
         /// <summary>
         /// 배경음악 재생 (인덱스 기반, O(1))

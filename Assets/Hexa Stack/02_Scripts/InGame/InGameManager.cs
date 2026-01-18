@@ -19,7 +19,7 @@ namespace HexaStack.Controllers.Managers
 
         protected override void Init()
         {
-            m_IsDestroyOnLoad = false; 
+            m_IsDestroyOnLoad = true;
             base.Init();
         }
 

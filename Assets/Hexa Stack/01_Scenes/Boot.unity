@@ -262,10 +262,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 912909093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.01388889, y: 0.264}
-  m_AnchorMax: {x: 0.98611104, y: 0.7363514}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 350, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &689223122
 MonoBehaviour:
@@ -353,10 +353,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 360, y: 740}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -547,6 +547,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1437432524300062393, guid: f97c608e471a0d94fbb8dbbdccee7779, type: 3}
+      propertyPath: m_BGMClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 27d086307f6a8304bbe5dfcbd02c3400, type: 3}
     - target: {fileID: 3385072461625777176, guid: f97c608e471a0d94fbb8dbbdccee7779, type: 3}
       propertyPath: m_Name
       value: AudioManager

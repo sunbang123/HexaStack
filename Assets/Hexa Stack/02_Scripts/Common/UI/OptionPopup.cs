@@ -23,26 +23,31 @@ namespace HexaStack.Views
 
             _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
         }
+        public override void ShowUI()
+        {
+            if (!object.ReferenceEquals(AudioManager.Instance, null))
+            {
+                _bgmSlider.value = AudioManager.Instance.BGMVolume;
+                _sfxSlider.value = AudioManager.Instance.SFXVolume;
+            }
+
+            base.ShowUI();
+        }
 
         private void OnBGMSliderChanged(float value)
         {
-            // 전역 AudioManager에 즉시 반영 (마샬링 최소화 호출)
             if (!object.ReferenceEquals(AudioManager.Instance, null))
             {
-                AudioManager.Instance.SetVolume(value);
+                AudioManager.Instance.BGMVolume = value;
             }
         }
 
         private void OnSFXSliderChanged(float value)
         {
-            // 효과음 볼륨 조절 로직 (필요시 추가)
-        }
-
-        // 팝업이 켜질 때마다 호출될 함수
-        public void Open()
-        {
-            gameObject.SetActive(true);
-            transform.SetAsLastSibling(); // UI 최상단으로
+            if (!object.ReferenceEquals(AudioManager.Instance, null))
+            {
+                AudioManager.Instance.SFXVolume = value;
+            }
         }
     }
 }

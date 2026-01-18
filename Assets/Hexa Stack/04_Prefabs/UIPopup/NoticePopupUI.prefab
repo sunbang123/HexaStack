@@ -889,6 +889,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3737492746756440764}
   - component: {fileID: 7690702447901275001}
+  - component: {fileID: 7193811781285995625}
   m_Layer: 5
   m_Name: NoticePopupUI
   m_TagString: Untagged
@@ -929,8 +930,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0973d4d005bd4004db35a9d3a3050f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_CanvasGroup: {fileID: 7193811781285995625}
+  m_UIOpenAnim: {fileID: 1527830700282223542}
   _messageText: {fileID: 3737492747077673169}
   _confirmButton: {fileID: 3737492747117750160}
+--- !u!225 &7193811781285995625
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3737492746756440763}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3737492747077673167
 GameObject:
   m_ObjectHideFlags: 0

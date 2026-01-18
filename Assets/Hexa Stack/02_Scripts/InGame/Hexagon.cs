@@ -5,15 +5,15 @@ using UnityEngine;
 public class Hexagon : MonoBehaviour
 {
     [Header(" Elements ")]
-    [SerializeField] private new Renderer renderer;
-    [SerializeField] private new Collider collider;
+    [SerializeField] private Renderer _renderer;
+    [SerializeField] private Collider _collider;
 
     public HexStack HexStack { get; private set; }
 
     public Color Color 
     {
-        get => renderer.material.color;
-        set => renderer.material.color = value;
+        get => _renderer.material.color;
+        set => _renderer.material.color = value;
     }
 
     public void Configure(HexStack hexStack)
@@ -26,7 +26,7 @@ public class Hexagon : MonoBehaviour
         transform.SetParent(parent);
     }
 
-    public void DisableCollider() => collider.enabled = false;
+    public void DisableCollider() => _collider.enabled = false;
 
     public void Vanish(float delay)
     {
