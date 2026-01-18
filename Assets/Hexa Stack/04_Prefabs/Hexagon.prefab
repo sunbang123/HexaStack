@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e2a1bfdc3d26cd4489bd041ef03acaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderer: {fileID: 3147041832205396338}
-  collider: {fileID: 6034034533960054521}
+  _renderer: {fileID: 3147041832205396338}
+  _collider: {fileID: 6034034533960054521}
 --- !u!64 &6034034533960054521
 MeshCollider:
   m_ObjectHideFlags: 0

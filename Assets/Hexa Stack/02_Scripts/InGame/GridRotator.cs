@@ -80,20 +80,16 @@ namespace HexaStack.Controllers
 
     private bool IsPointerOverUI()
     {
-        if (EventSystem.current == null) return false;
-
-        // PC 마우스 체크
-        if (EventSystem.current.IsPointerOverGameObject()) return true;
-
-        // 모바일 터치 체크
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        // 마샬링 없는 비교!
+        if (object.ReferenceEquals(EventSystem.current, null))
         {
-            if (EventSystem.current.IsPointerOverGameObject(0)) return true;
+            return true;
         }
-        return false;
+
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
-    private void StartRotation()
+        private void StartRotation()
     {
         isRotating = true;
         lastAngle = CalculateMouseAngle();

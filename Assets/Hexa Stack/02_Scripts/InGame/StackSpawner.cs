@@ -50,7 +50,7 @@ namespace HexaStack.Controllers
     private void GenerateStacks()
     {
         for (int i = 0; i < stackPositionsParent.childCount; i++)
-            GenerateStack(stackPositionsParent.GetChild(i));        
+            GenerateStack(stackPositionsParent.GetChild(i));
     }
 
     private void GenerateStack(Transform parent)

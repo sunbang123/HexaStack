@@ -1,8 +1,8 @@
-# HexaStack
+# Cosmic Hexa Puzzle
 
 ## 프로젝트 소개
 
-**HexaStack**는 육각형 타일을 전략적으로 배치하고 정렬하는 퍼즐 게임입니다. 이 프로젝트는 단순한 코드 구현을 넘어, 최종적으로 **모바일 게임 시장 출시**를 목표로 하는 모바일 최적화 게임 프로젝트입니다.
+**Cosmic Hexa Puzzle**는 육각형 타일을 전략적으로 배치하고 정렬하는 퍼즐 게임입니다. 이 프로젝트는 단순한 코드 구현을 넘어, 최종적으로 **모바일 게임 시장 출시**를 목표로 하는 모바일 최적화 게임 프로젝트입니다.
 
 ## 게임 장르 및 핵심 컨셉
 
@@ -12,7 +12,7 @@
 
 ## 🎮 게임 규칙 (Gameplay Rules)
 
-HexaStack의 핵심 로직(Core Logic)은 간단하지만 전략적인 판단을 요구합니다.
+Cosmic Hexa Puzzle의 핵심 로직(Core Logic)은 간단하지만 전략적인 판단을 요구합니다.
 
 1. **타일 배치**: 플레이어는 화면 하단에 생성된 다양한 색상의 육각형 타일 더미(Stack)를 선택하여 그리드 위의 빈 칸에 배치합니다.
 2. **색상 정렬 및 이동**: 타일을 배치했을 때, 인접한 칸에 **같은 색상의 타일**이 있다면 해당 타일들이 한곳으로 자동으로 이동하며 쌓입니다.
@@ -34,7 +34,6 @@ https://github.com/user-attachments/assets/de890afa-3775-4372-9111-864a0b2ea75f
 ## 개발 환경 (Technical Stack)
 
 * **Engine**: **Unity 2022.3.62f1 (LTS)**
-* **Tools**: **Cursor (AI Code Editor)**
 * **Language**: C#
 * **Platform**: Android / iOS (출시 목표)
 

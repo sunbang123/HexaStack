@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using HexaStack.Views;
 using HexaStack.Core;
@@ -9,38 +7,36 @@ namespace HexaStack.Controllers.Managers
 {
     public class LobbyManager : SingletonBehaviour<LobbyManager>
     {
-        public LobbyUIController LobbyUIController { get; private set; }
+        [Header("Scene Components")]
+        [SerializeField] private LobbyUIController _lobbyUIController;
 
         protected override void Init()
         {
-            m_IsDestroyOnLoad = true;
-            
+            m_IsDestroyOnLoad = true; 
             base.Init();
         }
 
         private void Start()
         {
-            LobbyUIController = FindObjectOfType<LobbyUIController>();
-            if(!LobbyUIController)
+            if (!object.ReferenceEquals(_lobbyUIController, null))
             {
-                Logger.Log("LobbyUIController does not exist.");
-                return;
+                _lobbyUIController.Init();
+            }
+            else
+            {
+                Logger.LogWarning("LobbyUIController is not assigned in Inspector.");
             }
 
-            LobbyUIController.Init();
-        }
-
-        public void StartInGame()
-        {
-            if (SceneLoader.Instance == null)
+            if (object.ReferenceEquals(SceneLoader.Instance, null))
             {
-                Logger.LogError("SceneLoader.Instance is null. Creating new SceneLoader...");
-                // SceneLoader가 없으면 생성
-                GameObject sceneLoaderObj = new GameObject("SceneLoader");
-                sceneLoaderObj.AddComponent<SceneLoader>();
+                Logger.LogError("SceneLoader가 없습니다.");
             }
 
-            SceneLoader.Instance.LoadScene(SceneType.InGame);
+            var audio = AudioManager.Instance;
+            if (!object.ReferenceEquals(audio, null))
+            {
+                audio.PlayBGM(BGM.Lobby);
+            }
         }
     }
 }

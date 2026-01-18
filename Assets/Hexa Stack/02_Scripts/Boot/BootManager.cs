@@ -1,102 +1,96 @@
 using System.Collections;
 using UnityEngine;
-using HexaStack.Views;
 using HexaStack.Core;
 using Logger = HexaStack.Core.Logger;
 
-namespace HexaStack.Controllers.Managers
+namespace HexaStack.Scenes.Boot
 {
-    public class BootManager : SingletonBehaviour<BootManager>
+    public class BootManager : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private float minLoadingTime = 2f; // 최소 로딩 시간 (초)
-        [SerializeField] private bool waitForMinimumTime = true; // 최소 시간 대기 여부
+        [Tooltip("로고를 보여줄 최소 시간")]
+        [SerializeField] private float _logoDisplayTime = 2.0f;
 
-        public BootUIController BootUIController { get; private set; }
+        [Header("Global Managers (Prefabs)")]
+        [SerializeField] private SceneLoader _sceneLoaderPrefab;
+        [SerializeField] private AudioManager _audioManagerPrefab;
+        [SerializeField] private UIManager _uiManagerPrefab;
 
-        protected override void Init()
-        {
-            m_IsDestroyOnLoad = true;
-            base.Init();
-        }
+        [Header("Global Systems (Prefabs)")]
+        [SerializeField] private GameObject _eventSystemPrefab;
+
+        [Header("Global UI Prefabs (For UIManager Registration)")]
+        [SerializeField] private Views.OptionPopup _optionPopupPrefab;
+        [SerializeField] private Views.NoticePopup _noticePopupPrefab;
 
         private void Start()
         {
-            Initialize();
+            InitializeGlobalSystems();
+            InitializeGlobalManagers();
+            StartCoroutine(SplashProcess());
         }
 
-        private void Initialize()
+        private void InitializeGlobalSystems()
         {
-            BootUIController = FindObjectOfType<BootUIController>();
-            if (!BootUIController)
+            if (object.ReferenceEquals(GlobalEventSystem.Instance, null))
             {
-                Logger.LogWarning("BootUIController does not exist. Creating default loading...");
-                // BootUIController가 없어도 기본 로딩 진행
-                StartCoroutine(LoadLobbySceneCoroutine());
-                return;
+                if (_eventSystemPrefab != null)
+                {
+                    // 여기서 Instantiate 하면 GlobalEventSystem의 Init()이 돌면서 
+                    // DontDestroyOnLoad까지 한 방에 해결됨!
+                    Instantiate(_eventSystemPrefab);
+                    Logger.Log("[Boot] GlobalEventSystem Created.");
+                }
             }
 
-            BootUIController.Init();
-            StartCoroutine(LoadLobbySceneCoroutine());
+            // B. UIManager 생성 및 범용 UI 등록
+            if (object.ReferenceEquals(UIManager.Instance, null))
+            {
+                if (_uiManagerPrefab != null)
+                {
+                    Instantiate(_uiManagerPrefab);
+                    Logger.Log("[Boot] UIManager Created.");
+
+                    // 제네릭 등록: 타입 안정성 확보 및 마샬링 우회
+                    UIManager.Instance.RegisterPrefab<Views.OptionPopup>(_optionPopupPrefab);
+                    UIManager.Instance.RegisterPrefab<Views.NoticePopup>(_noticePopupPrefab);
+                }
+            }
+        }
+        private void InitializeGlobalManagers()
+        {
+            if (object.ReferenceEquals(SceneLoader.Instance, null))
+            {
+                // 프리팹은 유니티 오브젝트니까 Unity Null Check (안정성)
+                if (_sceneLoaderPrefab != null)
+                {
+                    Instantiate(_sceneLoaderPrefab);
+                }
+                else
+                {
+                    Logger.LogError("[BootManager] SceneLoader Prefab is missing!");
+                }
+            }
+
+            // 2. SoundManager 생성 체크
+            if (object.ReferenceEquals(AudioManager.Instance, null))
+            {
+                if (_audioManagerPrefab != null)
+                {
+                    Instantiate(_audioManagerPrefab);
+                }
+            }
         }
 
-        private IEnumerator LoadLobbySceneCoroutine()
+        private IEnumerator SplashProcess()
         {
-            // SceneLoader가 없으면 생성
-            if (SceneLoader.Instance == null)
-            {
-                Logger.LogWarning("SceneLoader.Instance is null. Creating new SceneLoader...");
-                GameObject sceneLoaderObj = new GameObject("SceneLoader");
-                sceneLoaderObj.AddComponent<SceneLoader>();
-                yield return null; // 한 프레임 대기하여 초기화 완료 대기
-            }
+            Logger.Log("[BootManager] System Initialized. Waiting for logo display...");
 
-            float startTime = Time.time;
-            AsyncOperation asyncOperation = SceneLoader.Instance.LoadSceneAsync(SceneType.Lobby);
+            yield return new WaitForSeconds(_logoDisplayTime);
 
-            if (asyncOperation == null)
-            {
-                Logger.LogError("Failed to load Lobby scene asynchronously.");
-                yield break;
-            }
+            if (object.ReferenceEquals(SceneLoader.Instance, null)) yield break;
 
-            // 로딩 진행률 업데이트
-            while (!asyncOperation.isDone)
-            {
-                float progress = Mathf.Clamp01(asyncOperation.progress / 0.9f); // 0.9까지가 실제 로딩, 0.9~1.0은 활성화 대기
-
-                // 최소 시간 대기 체크
-                if (waitForMinimumTime)
-                {
-                    float elapsedTime = Time.time - startTime;
-                    float timeBasedProgress = elapsedTime / minLoadingTime;
-                    
-                    // 시간 기반과 실제 로딩 진행률 중 더 높은 값을 사용
-                    progress = Mathf.Max(progress, timeBasedProgress);
-                }
-
-                // UI 업데이트
-                if (BootUIController != null)
-                {
-                    BootUIController.UpdateLoadingProgress(progress);
-                }
-
-                // 로딩이 완료되고 최소 시간도 지났으면 활성화
-                if (asyncOperation.progress >= 0.9f)
-                {
-                    if (!waitForMinimumTime || (Time.time - startTime) >= minLoadingTime)
-                    {
-                        // 약간의 지연 후 활성화 (부드러운 전환)
-                        yield return new WaitForSeconds(0.5f);
-                        SceneLoader.Instance.ActivateScene(asyncOperation);
-                        break;
-                    }
-                }
-
-                yield return null;
-            }
-
-            Logger.Log("Lobby scene loaded successfully.");
+            SceneLoader.Instance.LoadScene(SceneType.Lobby);
         }
     }
 }

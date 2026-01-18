@@ -8,7 +8,7 @@ public class Tower : MonoBehaviour
 {
     [Header("Elements")]
     //[SerializeField] private Animator animator;
-    private Renderer renderer;
+    private Renderer _renderer;
 
     [Header("Settings")]
     [SerializeField] private float fillIncrement;
@@ -17,7 +17,7 @@ public class Tower : MonoBehaviour
 
     private void Awake()
     {
-        renderer = GetComponent<Renderer>();
+        _renderer = GetComponent<Renderer>();
     }
 
     void Start()
@@ -47,7 +47,7 @@ public class Tower : MonoBehaviour
 
     private void UpdateMaterials()
     {
-        foreach(Material material in renderer.materials)
+        foreach(Material material in _renderer.materials)
         {
             material.SetFloat("_FillPercent", fillPercent * maxFillPercent);
         }
