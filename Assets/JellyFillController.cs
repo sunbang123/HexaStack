@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class JellyFillController : MonoBehaviour
 {
+    public event Action<float> OnProgressUpdated;
+
     private static readonly int FillID = Shader.PropertyToID("_FillPercent");
 
     private Renderer _renderer;
@@ -52,6 +55,8 @@ public class JellyFillController : MonoBehaviour
         _currentProgress = Mathf.Clamp01(_currentProgress);
 
         UpdateShader();
+
+        OnProgressUpdated?.Invoke(_currentProgress);
     }
 
     private void ApplyJellyEffect()
