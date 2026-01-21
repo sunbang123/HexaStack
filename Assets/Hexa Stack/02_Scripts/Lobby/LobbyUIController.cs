@@ -11,10 +11,35 @@ namespace HexaStack.Views
 {
     public class LobbyUIController : MonoBehaviour
     {
+        [Header("UI Components")]
+        [SerializeField] private TextMeshProUGUI _fillPercentText;
+
+        [Header("References")]
+        [SerializeField] private JellyFillController _jellyController;
+
         public void Init()
         {
+            if (_jellyController != null)
+            {
+                _jellyController.OnProgressUpdated += UpdateProgressText;
+            }
         }
 
+        private void OnDestroy()
+        {
+            if (_jellyController != null)
+            {
+                _jellyController.OnProgressUpdated -= UpdateProgressText;
+            }
+        }
+
+        private void UpdateProgressText(float progress)
+        {
+            if (_fillPercentText != null)
+            {
+                _fillPercentText.text = $"{progress * 100:F0}%";
+            }
+        }
         public void OnClickSettingsBtn()
         {
             Logger.Log($"{GetType()}::OnClickSettingsBtn");
