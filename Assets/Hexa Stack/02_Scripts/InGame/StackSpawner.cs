@@ -55,7 +55,13 @@ namespace HexaStack.Controllers
 
     private void GenerateStack(Transform parent)
     {
-        HexStack hexStack = Instantiate(hexagonStackPrefab, parent.position, Quaternion.identity, parent);
+        // [변경 1] Flat Top 그리드에 맞추기 위해 30도 회전 쿼터니언 정의
+        Quaternion flatTopRotation = Quaternion.Euler(0, 30, 0);
+
+        // [변경 2] 스택 컨테이너(부모) 생성 시 30도 회전 적용
+        // Quaternion.identity -> flatTopRotation으로 변경
+        HexStack hexStack = Instantiate(hexagonStackPrefab, parent.position, flatTopRotation, parent);
+
         hexStack.name = $"Stack { parent.GetSiblingIndex() }";
 
         int amount = Random.Range(minMaxHexCount.x, minMaxHexCount.y);
@@ -69,7 +75,9 @@ namespace HexaStack.Controllers
             Vector3 hexagonLocalPos = Vector3.up * i * .2f;
             Vector3 spawnPosition = hexStack.transform.TransformPoint(hexagonLocalPos);
 
-            Hexagon hexagonInstance = Instantiate(hexagonPrefab, spawnPosition, Quaternion.identity, hexStack.transform);
+            // [변경 3] 개별 육각형 생성 시에도 부모의 회전값(30도)을 적용
+            // Quaternion.identity -> hexStack.transform.rotation (또는 flatTopRotation)
+            Hexagon hexagonInstance = Instantiate(hexagonPrefab, spawnPosition, hexStack.transform.rotation, hexStack.transform);
             hexagonInstance.Color = i < firstColorHexagonCount ? colorArray[0] : colorArray[1];
 
             hexagonInstance.Configure(hexStack);
