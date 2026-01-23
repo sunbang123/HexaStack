@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
-using UnityEditor;
+#if UNITY_EDITOR
+using UnityEditor; // Handles를 쓰기 위해 필요
+#endif
 
 namespace HexaStack.Controllers
 {
     public class GridGeneratorController : MonoBehaviour
     {
- 
-       [Header(" Elements ")]
+        [Header(" Elements ")]
         [SerializeField] private Grid grid;
         [SerializeField] private GameObject hexagon;
 
@@ -27,16 +28,44 @@ namespace HexaStack.Controllers
 
             ExecuteCubeGeneration();
 
-            Core.Logger.Log($"[GridGenerator] {gridSize} 사이즈의 수학적 그리드 생성 완료.");
+            // Core.Logger가 없으면 일반 Debug.Log로 대체 (에러 방지용)
+            Debug.Log($"[GridGenerator] {gridSize} 사이즈의 수학적 그리드 생성 완료.");
         }
-
-        private void ExecuteCubeGeneration()
+        private Vector3 CalculateLocalPos(int q, int r, int s)
         {
-            // [변경 1] Flat Top 기준의 치수 정의 (반대로 설정)
-            // Flat Top은 너비가 size * 2, 높이가 size * sqrt(3)입니다.
-            float flatWidth = hexSize * 2f;
+            //// Pointy Top 계산식
+            //float height = hexSize * 2;
+            //float width = hexSize * Mathf.Sqrt(3);
+
+            //Vector3 qDirection = Quaternion.Euler(0, 60, 0) * Vector3.right;
+            //Vector3 rDirection = Vector3.back;
+            //Vector3 sDirection = Quaternion.Euler(0, 120, 0) * Vector3.right;
+
+            //// [핵심] spawnOffset = q벡터 + r벡터 + s벡터의 합으로 계산
+            //Vector3 spawnOffset =
+            //    rDirection * r * height * 1.5f +
+            //    qDirection * q * width +
+            //    sDirection * s * width;
+
+            //return spawnOffset;
+
+            // [핵심] Flat Top은 "가로(Width)"가 더 김 (반지름 * 2)
             float flatHeight = hexSize * Mathf.Sqrt(3f);
 
+            // [핵심] Flat Top 좌표 표준 공식 (Red Blob Games)
+            // X축: q(열)가 1개 늘어날 때마다 지름의 3/4(1.5배)만큼 이동
+            float x = hexSize * (1.5f) * q;
+            // Z축: r(행)에 따라 높이 이동 + q(열)에 따라 반 칸씩(0.5) 지그재그 보정
+            float z = flatHeight * (r + q / 2f);
+
+            return new Vector3(x, 0, z);
+        }
+
+        // ==================================================================================
+        // 2. 실제 헥사곤 오브젝트 생성 (버튼/값 변경 시 실행)
+        // ==================================================================================
+        private void ExecuteCubeGeneration()
+        {
             transform.Clear();
 
             for (int q = -gridSize; q <= gridSize; q++)
@@ -45,25 +74,18 @@ namespace HexaStack.Controllers
                 {
                     for (int s = -gridSize; s <= gridSize; s++)
                     {
-                        // QRS 좌표계 조건 (변함 없음)
                         if (q + r + s != 0)
                             continue;
 
-                        // [변경 2] 위치 계산 (Red Blob Games 표준 공식 적용)
-                        // Flat Top에서는 수평(X) 위치가 q에 의해 결정되고,
-                        // 수직(Z) 위치는 r과 q의 조합으로 결정됩니다.
-
-                        float xPos = hexSize * (3f / 2f) * q;
-                        float zPos = flatHeight * (r + q / 2f);
-
-                        Vector3 spawnPos = new Vector3(xPos, 0, zPos);
+                        // 공통 함수로 위치 계산
+                        Vector3 spawnPos = CalculateLocalPos(q, r, s);
 
                         GameObject gridHexInstance = Instantiate(hexagon);
-                        gridHexInstance.transform.position = spawnPos;
 
-                        // [변경 3] 프리팹 회전 (Y축 30도)
-                        // Pointy Top 모델을 Flat Top으로 보이게 하려면 30도 회전이 필요합니다.
-                        gridHexInstance.transform.rotation = Quaternion.Euler(0, 30, 0);
+                        // 로컬 좌표를 월드 좌표로 변환 (부모가 이동했을 때 대비)
+                        gridHexInstance.transform.position = transform.position + spawnPos;
+                        // gridHexInstance.transform.rotation = Quaternion.identity; // Pointy Top
+                        gridHexInstance.transform.rotation = Quaternion.Euler(0, 30, 0); // Flat Top
                         gridHexInstance.transform.SetParent(transform);
                     }
                 }
@@ -80,5 +102,47 @@ namespace HexaStack.Controllers
                     DestroyImmediate(transform.GetChild(i).gameObject);
             }
         }
+
+        // ==================================================================================
+        // 3. 씬 뷰 시각화 (유니티가 매 프레임 자동 호출)
+        // ==================================================================================
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            // 스타일 설정
+            GUIStyle style = new GUIStyle();
+            style.normal.textColor = Color.yellow;
+            style.fontSize = 12; // 글자 크기 적당히 조절
+            style.alignment = TextAnchor.MiddleCenter;
+            style.fontStyle = FontStyle.Bold;
+
+            int order = 0;
+
+            // QRS 루프 로직
+            for (int q = -gridSize; q <= gridSize; q++)
+            {
+                for (int r = -gridSize; r <= gridSize; r++)
+                {
+                    for (int s = -gridSize; s <= gridSize; s++)
+                    {
+                        if (q + r + s != 0)
+                            continue;
+
+                        // 공통 함수로 위치 계산 (로직 통일)
+                        Vector3 localPos = CalculateLocalPos(q, r, s);
+
+                        // Gizmos는 월드 좌표 기준이므로 transform.position 더하기
+                        Vector3 worldPos = transform.position + localPos;
+
+                        // 순서와 좌표 텍스트 표시
+                        string label = $"{order}\n({q},{r},{s})";
+                        Handles.Label(worldPos, label, style);
+
+                        order++;
+                    }
+                }
+            }
+        }
+#endif
     }
 }
