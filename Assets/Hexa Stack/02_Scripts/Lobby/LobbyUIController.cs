@@ -17,11 +17,19 @@ namespace HexaStack.Views
         [Header("References")]
         [SerializeField] private JellyFillController _jellyController;
 
+        [Header("Local UI Prefabs")]
+        [SerializeField] private ArchivePopup _archivePrefab;
+        
         public void Init()
         {
             if (_jellyController != null)
             {
                 _jellyController.OnProgressUpdated += UpdateProgressText;
+            }
+            // [수정] 여기가 핵심! 로비 씬에 들어왔을 때 "이거 등록해줘"라고 UIManager에게 요청
+            if (UIManager.Instance != null && _archivePrefab != null)
+            {
+                UIManager.Instance.RegisterPrefab<ArchivePopup>(_archivePrefab);
             }
         }
 
@@ -51,6 +59,17 @@ namespace HexaStack.Views
             else
             {
                 Logger.LogError("UIManager Instance를 찾을 수 없습니다!");
+            }
+        }
+
+        public void OnClickArchiveBtn()
+        {
+            Logger.Log($"{GetType()}::OnClickAchieveBtn");
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                // 등록은 Init에서 했으니, 여기선 열기만 하면 됨!
+                UIManager.Instance.OpenUI<ArchivePopup>(null);
             }
         }
 

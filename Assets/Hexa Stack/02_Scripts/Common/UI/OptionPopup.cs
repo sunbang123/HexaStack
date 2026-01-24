@@ -15,9 +15,6 @@ namespace HexaStack.Views
 
         private void Start()
         {
-            // 1. 초기 볼륨 세팅 (AudioManager에서 현재 값 가져오기)
-            // 브로의 AudioManager에 GetVolume 기능이 있다면 여기서 연동!
-
             _bgmSlider.onValueChanged.AddListener(OnBGMSliderChanged);
             _sfxSlider.onValueChanged.AddListener(OnSFXSliderChanged);
 
