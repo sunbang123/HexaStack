@@ -12,12 +12,10 @@ namespace HexaStack.Views
 
         [Header("Buttons")]
         [SerializeField] private Button _closeButton;
+        private string PRIVACY_POLICY_URL = "https://south-comic-1a2.notion.site/Cosmic-Hexa-Puzzle-2f6068d6f71e80b88f37d5ce122a9358?pvs=143";
 
         private void Start()
         {
-            // 1. 초기 볼륨 세팅 (AudioManager에서 현재 값 가져오기)
-            // 브로의 AudioManager에 GetVolume 기능이 있다면 여기서 연동!
-
             _bgmSlider.onValueChanged.AddListener(OnBGMSliderChanged);
             _sfxSlider.onValueChanged.AddListener(OnSFXSliderChanged);
 
@@ -48,6 +46,12 @@ namespace HexaStack.Views
             {
                 AudioManager.Instance.SFXVolume = value;
             }
+        }
+
+        public void OnClickPrivacyPolicyURL()
+        {
+            Core.Logger.Log($"{GetType()}::OnClickPrivacyPolicyURL");
+            Application.OpenURL(PRIVACY_POLICY_URL);
         }
     }
 }

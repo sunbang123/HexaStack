@@ -17,11 +17,35 @@ namespace HexaStack.Views
         [Header("References")]
         [SerializeField] private JellyFillController _jellyController;
 
+        [Header("Local UI Prefabs")]
+        [SerializeField] private ArchivePopup _archivePrefab;
+
+        [Header("Local UI Prefabs")]
+        [SerializeField] private ProfilePopup _profilePrefab;
+
+        [Header("Local UI Prefabs")]
+        [SerializeField] private RankPopup _rankPrefab;
+
         public void Init()
         {
             if (_jellyController != null)
             {
                 _jellyController.OnProgressUpdated += UpdateProgressText;
+            }
+
+            if (UIManager.Instance != null && _archivePrefab != null)
+            {
+                UIManager.Instance.RegisterPrefab<ArchivePopup>(_archivePrefab);
+            }
+
+            if (UIManager.Instance != null && _profilePrefab != null)
+            {
+                UIManager.Instance.RegisterPrefab<ProfilePopup>(_profilePrefab);
+            }
+
+            if (UIManager.Instance != null && _rankPrefab != null)
+            {
+                UIManager.Instance.RegisterPrefab<RankPopup>(_rankPrefab);
             }
         }
 
@@ -44,9 +68,11 @@ namespace HexaStack.Views
         {
             Logger.Log($"{GetType()}::OnClickSettingsBtn");
 
+            var uiData = new BaseUIData();
+
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                UIManager.Instance.OpenUI<OptionPopup>(null);
+                UIManager.Instance.OpenUI<OptionPopup>(uiData);
             }
             else
             {
@@ -54,9 +80,39 @@ namespace HexaStack.Views
             }
         }
 
+        public void OnClickArchiveBtn()
+        {
+            Logger.Log($"{GetType()}::OnClickAchieveBtn");
+
+            var uiData = new BaseUIData();
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.OpenUI<ArchivePopup>(uiData);
+            }
+        }
+
         public void OnClickProfileBtn()
         {
-            Logger.Log($"{GetType()}::OnClickProfileBtn");
+            Logger.Log($"{GetType()}::OnClickAchieveBtn");
+
+            var uiData = new BaseUIData();
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.OpenUI<ProfilePopup>(uiData);
+            }
+        }
+        public void OnClickRankBtn()
+        {
+            Logger.Log($"{GetType()}::OnClickAchieveBtn");
+
+            var uiData = new BaseUIData();
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.OpenUI<RankPopup>(uiData);
+            }
         }
 
         public void OnClickCurrChapter()
