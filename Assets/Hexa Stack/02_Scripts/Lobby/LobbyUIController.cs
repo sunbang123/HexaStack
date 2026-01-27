@@ -19,17 +19,25 @@ namespace HexaStack.Views
 
         [Header("Local UI Prefabs")]
         [SerializeField] private ArchivePopup _archivePrefab;
-        
+
+        [Header("Local UI Prefabs")]
+        [SerializeField] private ProfilePopup _profilePrefab;
+
         public void Init()
         {
             if (_jellyController != null)
             {
                 _jellyController.OnProgressUpdated += UpdateProgressText;
             }
-            // [수정] 여기가 핵심! 로비 씬에 들어왔을 때 "이거 등록해줘"라고 UIManager에게 요청
+
             if (UIManager.Instance != null && _archivePrefab != null)
             {
                 UIManager.Instance.RegisterPrefab<ArchivePopup>(_archivePrefab);
+            }
+
+            if (UIManager.Instance != null && _profilePrefab != null)
+            {
+                UIManager.Instance.RegisterPrefab<ProfilePopup>(_profilePrefab);
             }
         }
 
@@ -75,7 +83,13 @@ namespace HexaStack.Views
 
         public void OnClickProfileBtn()
         {
-            Logger.Log($"{GetType()}::OnClickProfileBtn");
+            Logger.Log($"{GetType()}::OnClickAchieveBtn");
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                // 등록은 Init에서 했으니, 여기선 열기만 하면 됨!
+                UIManager.Instance.OpenUI<ProfilePopup>(null);
+            }
         }
 
         public void OnClickCurrChapter()
