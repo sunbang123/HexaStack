@@ -23,6 +23,9 @@ namespace HexaStack.Views
         [Header("Local UI Prefabs")]
         [SerializeField] private ProfilePopup _profilePrefab;
 
+        [Header("Local UI Prefabs")]
+        [SerializeField] private RankPopup _rankPrefab;
+
         public void Init()
         {
             if (_jellyController != null)
@@ -38,6 +41,11 @@ namespace HexaStack.Views
             if (UIManager.Instance != null && _profilePrefab != null)
             {
                 UIManager.Instance.RegisterPrefab<ProfilePopup>(_profilePrefab);
+            }
+
+            if (UIManager.Instance != null && _rankPrefab != null)
+            {
+                UIManager.Instance.RegisterPrefab<RankPopup>(_rankPrefab);
             }
         }
 
@@ -76,7 +84,6 @@ namespace HexaStack.Views
 
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                // 등록은 Init에서 했으니, 여기선 열기만 하면 됨!
                 UIManager.Instance.OpenUI<ArchivePopup>(null);
             }
         }
@@ -87,8 +94,16 @@ namespace HexaStack.Views
 
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                // 등록은 Init에서 했으니, 여기선 열기만 하면 됨!
                 UIManager.Instance.OpenUI<ProfilePopup>(null);
+            }
+        }
+        public void OnClickRankBtn()
+        {
+            Logger.Log($"{GetType()}::OnClickAchieveBtn");
+
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.OpenUI<RankPopup>(null);
             }
         }
 

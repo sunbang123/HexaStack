@@ -12,6 +12,7 @@ namespace HexaStack.Views
 
         [Header("Buttons")]
         [SerializeField] private Button _closeButton;
+        private string PRIVACY_POLICY_URL = "https://south-comic-1a2.notion.site/Cosmic-Hexa-Puzzle-2f6068d6f71e80b88f37d5ce122a9358?pvs=143";
 
         private void Start()
         {
@@ -45,6 +46,12 @@ namespace HexaStack.Views
             {
                 AudioManager.Instance.SFXVolume = value;
             }
+        }
+
+        public void OnClickPrivacyPolicyURL()
+        {
+            Core.Logger.Log($"{GetType()}::OnClickPrivacyPolicyURL");
+            Application.OpenURL(PRIVACY_POLICY_URL);
         }
     }
 }

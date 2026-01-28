@@ -1779,7 +1779,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 634439667}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1979908925}
+        m_TargetAssemblyTypeName: HexaStack.Views.LobbyUIController, Assembly-CSharp
+        m_MethodName: OnClickRankBtn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &634439667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2124,7 +2136,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 784452087}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79d0ad747ac9298428d4b4091a8e275b, type: 3}
   m_Name: 
@@ -3963,6 +3975,7 @@ MonoBehaviour:
   _jellyController: {fileID: 112718405}
   _archivePrefab: {fileID: 4029970248931302777, guid: 89884daa06ed7e5458f38a6fa63b5b2e, type: 3}
   _profilePrefab: {fileID: 1364791302240028966, guid: 254090096b963d6439e3b0801a13d7a9, type: 3}
+  _rankPrefab: {fileID: 280661649702997746, guid: 2d497d74ff465364aa89351aa3da7cf8, type: 3}
 --- !u!1001 &3825808176656213146
 PrefabInstance:
   m_ObjectHideFlags: 0
