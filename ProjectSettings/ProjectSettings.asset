@@ -812,11 +812,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 2973cea9-38e5-4135-847b-489c56c8a0cf
+  cloudProjectId: 63af46f3-2d8d-4a03-b032-a52ae996457a
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: ali01ch
+  projectName: Hexa Stack
+  organizationId: sunbang123
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
