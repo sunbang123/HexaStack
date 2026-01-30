@@ -1,15 +1,15 @@
 using UnityEngine;
-using HexaStack.Core; // SingletonBehaviour°¡ ÀÖ´Â ³×ÀÓ½ºÆäÀÌ½º
+using HexaStack.Core; // SingletonBehaviourï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
 using System.Collections;
 
 namespace HexaStack.Core
 {
-    // [Áß¿ä] ÀÎ½ºÆåÅÍ ¹è¿­ ¼ø¼­¿Í ÀÌ Enum ¼ø¼­°¡ 1:1·Î ÀÏÄ¡ÇØ¾ß ÇÔ!
+    // [ï¿½ß¿ï¿½] ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Enum ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1:1ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ø¾ï¿½ ï¿½ï¿½!
     public enum BGM
     {
         Lobby = 0,
         InGame = 1,
-        // ÇÊ¿äÇÏ¸é ¿©±â¿¡ Ãß°¡ (¿¹: Boss, Ending...)
+        // ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½â¿¡ ï¿½ß°ï¿½ (ï¿½ï¿½: Boss, Ending...)
         COUNT
     }
 
@@ -18,25 +18,25 @@ namespace HexaStack.Core
         ChapterClear = 0,
         StageClear = 1,
         UIButtonClick = 2,
-        // ÇÊ¿äÇÏ¸é ¿©±â¿¡ Ãß°¡
+        // ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½â¿¡ ï¿½ß°ï¿½
         COUNT
     }
 
     public class AudioManager : SingletonBehaviour<AudioManager>
     {
         [Header("Audio Sources (Drag & Drop)")]
-        [Tooltip("¹è°æÀ½¾Ç¿ë ¿Àµð¿À ¼Ò½º (Loop ÄÑ±â)")]
+        [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò½ï¿½ (Loop ï¿½Ñ±ï¿½)")]
         [SerializeField] private AudioSource m_BGMSource;
 
-        [Tooltip("È¿°úÀ½¿ë ¿Àµð¿À ¼Ò½º (Loop ²ô±â)")]
+        [Tooltip("È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò½ï¿½ (Loop ï¿½ï¿½ï¿½ï¿½)")]
         [SerializeField] private AudioSource m_SFXSource;
 
         [Header("Audio Clips Lookup Table")]
-        [Tooltip("Enum ¼ø¼­´ë·Î Å¬¸³À» ³ÖÀ¸¼¼¿ä.")]
+        [Tooltip("Enum ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.")]
         [NamedArray(typeof(BGM))]
         [SerializeField] private AudioClip[] m_BGMClips;
 
-        [Tooltip("Enum ¼ø¼­´ë·Î Å¬¸³À» ³ÖÀ¸¼¼¿ä.")]
+        [Tooltip("Enum ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.")]
         [NamedArray(typeof(SFX))]
         [SerializeField] private AudioClip[] m_SFXClips;
 
@@ -44,18 +44,18 @@ namespace HexaStack.Core
         {
             base.Init();
 
-            // [¾ÈÁ¤¼º Ã¼Å©] °³¹ßÀÚ°¡ ÀÎ½ºÆåÅÍ ¿¬°á ±î¸Ô¾úÀ» ¶§ °æ°í
+            // [ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©] ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
             if (m_BGMSource == null || m_SFXSource == null)
             {
                 Logger.LogError("[SoundManager] AudioSources are missing! Please assign them in Inspector.");
             }
 
-            // Àü¿ª ¸Å´ÏÀúÀÌ¹Ç·Î ¾À ÀüÈ¯ ½Ã ÆÄ±«µÇÁö ¾ÊÀ½
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½Ì¹Ç·ï¿½ ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             m_IsDestroyOnLoad = false;
         }
 
         /// <summary>
-        /// BGM º¼·ý (0.0 ~ 1.0) ÀÐ±â/¾²±â
+        /// BGM ï¿½ï¿½ï¿½ï¿½ (0.0 ~ 1.0) ï¿½Ð±ï¿½/ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public float BGMVolume
         {
@@ -64,7 +64,7 @@ namespace HexaStack.Core
         }
 
         /// <summary>
-        /// SFX º¼·ý (0.0 ~ 1.0) ÀÐ±â/¾²±â
+        /// SFX ï¿½ï¿½ï¿½ï¿½ (0.0 ~ 1.0) ï¿½Ð±ï¿½/ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public float SFXVolume
         {
@@ -74,13 +74,13 @@ namespace HexaStack.Core
 
         #region BGM Logic
         /// <summary>
-        /// ¹è°æÀ½¾Ç Àç»ý (ÀÎµ¦½º ±â¹Ý, O(1))
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, O(1))
         /// </summary>
         public void PlayBGM(BGM bgm)
         {
             int index = (int)bgm;
 
-            // 1. ¹è¿­ ¹üÀ§ ¹æ¾î ÄÚµå
+            // 1. ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµï¿½
             if (index < 0 || index >= m_BGMClips.Length)
             {
                 Logger.LogError($"[SoundManager] Missing BGM Clip for index: {index} ({bgm})");
@@ -89,11 +89,12 @@ namespace HexaStack.Core
 
             AudioClip targetClip = m_BGMClips[index];
 
-            // 2. ÀÌ¹Ì °°Àº ³ë·¡°¡ ³ª¿À°í ÀÖ´Ù¸é ¹«½Ã (ºÒÇÊ¿äÇÑ ¸®¼Â ¹æÁö)
+            // 2. ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ë·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             if (m_BGMSource.isPlaying && m_BGMSource.clip == targetClip)
                 return;
 
             m_BGMSource.clip = targetClip;
+            m_BGMSource.loop = true;
             m_BGMSource.Play();
         }
 
@@ -115,28 +116,28 @@ namespace HexaStack.Core
 
         #region SFX Logic
         /// <summary>
-        /// È¿°úÀ½ Àç»ý (PlayOneShot »ç¿ë - ¼Ò½º 1°³·Î ÁßÃ¸ Àç»ý °¡´É)
+        /// È¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (PlayOneShot ï¿½ï¿½ï¿½ - ï¿½Ò½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¸ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         /// </summary>
         public void PlaySFX(SFX sfx)
         {
             int index = (int)sfx;
 
-            // 1. ¹è¿­ ¹üÀ§ ¹æ¾î ÄÚµå
+            // 1. ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµï¿½
             if (index < 0 || index >= m_SFXClips.Length)
             {
                 Logger.LogError($"[SoundManager] Missing SFX Clip for index: {index} ({sfx})");
                 return;
             }
 
-            // 2. PlayOneShot: È¿°úÀ½ÀÌ °ãÃÄµµ ²÷±âÁö ¾Ê°í ÀÚ¿¬½º·´°Ô ¼¯¿© ³ª¿È
-            // º°µµÀÇ AudioSource »ý¼º ºñ¿ë(New GameObject)ÀÌ ¾øÀ½.
+            // 2. PlayOneShot: È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Äµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AudioSource ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(New GameObject)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
             m_SFXSource.PlayOneShot(m_SFXClips[index]);
         }
         #endregion
 
         #region Volume Control
         /// <summary>
-        /// ÀüÃ¼ À½¼Ò°Å (Åä±Û ¹æ½Ä)
+        /// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ò°ï¿½ (ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
         /// </summary>
         public void ToggleMute()
         {
@@ -150,8 +151,8 @@ namespace HexaStack.Core
             m_SFXSource.mute = isMute;
         }
 
-        // (¼±ÅÃ »çÇ×) º¼·ý Á¶Àý ±â´ÉÀÌ ÇÊ¿äÇÏ´Ù¸é AudioMixer¸¦ ÃßÃµÇÏÁö¸¸,
-        // °£´ÜÇÏ°Ô´Â ÀÌ·¸°Ô ±¸Çö °¡´É.
+        // (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï´Ù¸ï¿½ AudioMixerï¿½ï¿½ ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ï°Ô´ï¿½ ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
         public void SetVolume(float volume) // 0.0f ~ 1.0f
         {
             m_BGMSource.volume = volume;
