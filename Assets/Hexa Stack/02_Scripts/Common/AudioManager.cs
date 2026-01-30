@@ -94,6 +94,7 @@ namespace HexaStack.Core
                 return;
 
             m_BGMSource.clip = targetClip;
+            m_BGMSource.loop = true;
             m_BGMSource.Play();
         }
 
