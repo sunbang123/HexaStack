@@ -68,9 +68,11 @@ namespace HexaStack.Views
         {
             Logger.Log($"{GetType()}::OnClickSettingsBtn");
 
+            var uiData = new BaseUIData();
+
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                UIManager.Instance.OpenUI<OptionPopup>(null);
+                UIManager.Instance.OpenUI<OptionPopup>(uiData);
             }
             else
             {
@@ -82,9 +84,11 @@ namespace HexaStack.Views
         {
             Logger.Log($"{GetType()}::OnClickAchieveBtn");
 
+            var uiData = new BaseUIData();
+
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                UIManager.Instance.OpenUI<ArchivePopup>(null);
+                UIManager.Instance.OpenUI<ArchivePopup>(uiData);
             }
         }
 
@@ -92,18 +96,22 @@ namespace HexaStack.Views
         {
             Logger.Log($"{GetType()}::OnClickAchieveBtn");
 
+            var uiData = new BaseUIData();
+
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                UIManager.Instance.OpenUI<ProfilePopup>(null);
+                UIManager.Instance.OpenUI<ProfilePopup>(uiData);
             }
         }
         public void OnClickRankBtn()
         {
             Logger.Log($"{GetType()}::OnClickAchieveBtn");
 
+            var uiData = new BaseUIData();
+
             if (!object.ReferenceEquals(UIManager.Instance, null))
             {
-                UIManager.Instance.OpenUI<RankPopup>(null);
+                UIManager.Instance.OpenUI<RankPopup>(uiData);
             }
         }
 
