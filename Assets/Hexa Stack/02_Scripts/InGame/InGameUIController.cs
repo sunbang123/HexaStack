@@ -22,7 +22,7 @@ namespace HexaStack.Views
             }
             else
             {
-                Logger.LogError("UIManager Instance¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+                Logger.LogError("UIManager Instanceë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             }
         }
 

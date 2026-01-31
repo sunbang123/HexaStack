@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsDestroyOnLoad: 0
-  _globalCanvas: {fileID: 3427225950219786374}
+  _uiCanvas: {fileID: 3427225950219786374}
 --- !u!1 &8271388875634665608
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 5717927463039669601}
   - component: {fileID: 4985305843660726411}
   m_Layer: 0
-  m_Name: GlobalCanvas
+  m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

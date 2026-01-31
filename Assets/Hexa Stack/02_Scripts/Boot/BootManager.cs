@@ -51,9 +51,9 @@ namespace HexaStack.Scenes.Boot
                     Instantiate(_uiManagerPrefab);
                     Logger.Log("[Boot] UIManager Created.");
 
-                    // 제네릭 등록: 타입 안정성 확보 및 마샬링 우회
-                    UIManager.Instance.RegisterPrefab<Views.OptionPopup>(_optionPopupPrefab);
-                    UIManager.Instance.RegisterPrefab<Views.NoticePopup>(_noticePopupPrefab);
+                    // Global UI 등록: 게임 전체에서 사용하는 UI
+                    UIManager.Instance.RegisterPrefabGlobal<Views.OptionPopup>(_optionPopupPrefab);
+                    UIManager.Instance.RegisterPrefabGlobal<Views.NoticePopup>(_noticePopupPrefab);
                 }
             }
         }
