@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using HexaStack.Core;
@@ -57,8 +55,9 @@ namespace HexaStack.Views
         /// </summary>
         private System.Collections.IEnumerator LoadRankDataCoroutine()
         {
-            // 스피너 표시 (Blocking UI)
-            ShowSpinner();
+            // 글로벌 스피너 표시 (Blocking UI)
+            // [안전] Instance가 null이면 스피너 없이 진행
+            GlobalSpinner.Instance?.Show();
 
             // TODO: 실제 서버 통신 또는 데이터 로딩 로직
             // 예: yield return StartCoroutine(RankDataManager.Instance.FetchRankData());
@@ -69,7 +68,7 @@ namespace HexaStack.Views
             // 3. 데이터 가져오기 (예: LevelManager나 UserDataManager에서)
             // 임시로 더미 데이터 10개를 가져온다고 가정할게.
 
-            HideSpinner();
+            GlobalSpinner.Instance?.Hide();
         }
 
         /// <summary>

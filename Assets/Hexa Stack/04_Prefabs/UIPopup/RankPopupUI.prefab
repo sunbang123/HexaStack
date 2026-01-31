@@ -1174,6 +1174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 2958630231996221677}
   m_UIOpenAnim: {fileID: 6107034018887230226}
+  m_SpinnerObject: {fileID: 1944513073892476349, guid: e267d20730aa466458b03ebd8dc26184, type: 3}
   _closeBtn: {fileID: 7058324485886872623}
   _scrollView: {fileID: 0}
   _contentRoot: {fileID: 0}

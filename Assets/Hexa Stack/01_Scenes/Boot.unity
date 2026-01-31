@@ -614,11 +614,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3482150055558123300, guid: 907b278a7d3eede48ac3da3286160283, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 21.333334
+      value: 20.148148
       objectReference: {fileID: 0}
     - target: {fileID: 3482150055558123300, guid: 907b278a7d3eede48ac3da3286160283, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -10.666667
+      value: -10.074074
       objectReference: {fileID: 0}
     - target: {fileID: 4222592810263868269, guid: 907b278a7d3eede48ac3da3286160283, type: 3}
       propertyPath: m_AnchorMax.y
@@ -738,7 +738,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8381302771176752386, guid: 907b278a7d3eede48ac3da3286160283, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 21.333334
+      value: 20.148148
       objectReference: {fileID: 0}
     - target: {fileID: 8694230799397044312, guid: 907b278a7d3eede48ac3da3286160283, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
