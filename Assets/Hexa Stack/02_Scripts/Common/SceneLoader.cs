@@ -43,6 +43,12 @@ namespace HexaStack.Core
             yield return SceneManager.LoadSceneAsync((int)_loadingSceneType, LoadSceneMode.Additive);
             yield return null;
 
+            // 씬 전환 전 Local UI 해제
+            if (!object.ReferenceEquals(UIManager.Instance, null))
+            {
+                UIManager.Instance.UnregisterLocalUIs();
+            }
+
             Scene currentScene = SceneManager.GetActiveScene();
             if (currentScene.IsValid())
             {

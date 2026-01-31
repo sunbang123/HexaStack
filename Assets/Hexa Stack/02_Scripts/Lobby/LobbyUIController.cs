@@ -33,19 +33,22 @@ namespace HexaStack.Views
                 _jellyController.OnProgressUpdated += UpdateProgressText;
             }
 
+            // Local UI 등록: Lobby 씬에서만 사용하는 UI
             if (UIManager.Instance != null && _archivePrefab != null)
             {
-                UIManager.Instance.RegisterPrefab<ArchivePopup>(_archivePrefab);
+                UIManager.Instance.RegisterPrefabLocal<ArchivePopup>(_archivePrefab);
             }
 
             if (UIManager.Instance != null && _profilePrefab != null)
             {
-                UIManager.Instance.RegisterPrefab<ProfilePopup>(_profilePrefab);
+                UIManager.Instance.RegisterPrefabLocal<ProfilePopup>(_profilePrefab);
             }
 
             if (UIManager.Instance != null && _rankPrefab != null)
             {
-                UIManager.Instance.RegisterPrefab<RankPopup>(_rankPrefab);
+                UIManager.Instance.RegisterPrefabLocal<RankPopup>(_rankPrefab);
+                // RankPopup을 Prewarm하여 미리 생성
+                UIManager.Instance.Prewarm<RankPopup>();
             }
         }
 
@@ -55,6 +58,14 @@ namespace HexaStack.Views
             {
                 _jellyController.OnProgressUpdated -= UpdateProgressText;
             }
+
+            // Local UI 해제는 SceneLoader에서 자동으로 처리되지만,
+            // 안전을 위해 여기서도 호출 가능 (중복 호출은 안전함)
+            // 주석 처리: SceneLoader에서 이미 처리하므로 불필요
+            // if (!object.ReferenceEquals(UIManager.Instance, null))
+            // {
+            //     UIManager.Instance.UnregisterLocalUIs();
+            // }
         }
 
         private void UpdateProgressText(float progress)
@@ -76,7 +87,7 @@ namespace HexaStack.Views
             }
             else
             {
-                Logger.LogError("UIManager Instance�� ã�� �� �����ϴ�!");
+                Logger.LogError("UIManager Instance를 찾을 수 없습니다!");
             }
         }
 

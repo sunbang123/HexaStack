@@ -1,42 +1,57 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HexaStack.Core
 {
     /// <summary>
-    /// UI¿¡ Àü´ŞÇÒ µ¥ÀÌÅÍ »óÀÚ
+    /// UIì— ì „ë‹¬í•  ë°ì´í„° êµ¬ì¡°
     /// </summary>
     public class BaseUIData
     {
         public Action OnShow;
         public Action OnClose;
-        // ÇÊ¿äÇÏ´Ù¸é ¿©±â¿¡ »ç¿îµå Å¸ÀÔÀÌ³ª ¿¬Ãâ ÇÃ·¡±×¸¦ Ãß°¡ÇÒ ¼ö ÀÖ¾î.
+        // í•„ìš”í•˜ë‹¤ë©´ ì´í›„ì— ì»¤ìŠ¤í…€ íƒ€ì…ì´ë‚˜ ì½œë°± í•¨ìˆ˜ë¥¼ ì¶”ê°€í•  ìˆ˜ ìˆì–´.
     }
 
     /// <summary>
-    /// ¸ğµç UI ÇÁ¸®ÆÕÀÇ Á¶»ó´Ô
+    /// ëª¨ë“  UI í”„ë¦¬íŒ¹ì˜ ê¸°ë³¸ í´ë˜ìŠ¤
     /// </summary>
-    [RequireComponent(typeof(CanvasGroup))] // ÆäÀÌµå È¿°ú ¹× Å¬¸¯ Â÷´ÜÀ» À§ÇØ ÇÊ¼ö
+    [RequireComponent(typeof(CanvasGroup))] // ì• ë‹ˆë©”ì´ì…˜ í¸ì˜ì™€ ë¸”ë¡ ë ˆì´ì–´ë¥¼ ìœ„í•´ í•„ìš”
     public abstract class BaseUI : MonoBehaviour
     {
         [Header("Base UI Elements")]
         [SerializeField] protected CanvasGroup m_CanvasGroup;
         [SerializeField] protected Animation m_UIOpenAnim;
 
+        [Header("Loading UI (Optional)")]
+        [Tooltip("ë°ì´í„° ë¡œë”© ì¤‘ í‘œì‹œí•  ìŠ¤í”¼ë„ˆ (1~3ì´ˆ ì§§ì€ ë¡œë”©ìš©) - ì„ íƒì ")]
+        [SerializeField] protected BaseSpinner m_Spinner; // ìŠ¤í”¼ë„ˆ ì°¸ì¡° (Inspectorì—ì„œ í• ë‹¹)
+
+        [Tooltip("ìŠ¤í”¼ë„ˆ í‘œì‹œ ì‹œ í™”ë©´ í„°ì¹˜ë¥¼ ë§‰ì„ ë°°ê²½ (Blocking UI) - ì„ íƒì ")]
+        [SerializeField] protected UnityEngine.UI.Image m_BlockingBackground; // íˆ¬ëª… ë°°ê²½ìœ¼ë¡œ í„°ì¹˜ ì°¨ë‹¨
+
         protected Action m_OnShow;
         protected Action m_OnClose;
 
         /// <summary>
-        /// UIManager°¡ Instantiate Á÷ÈÄ¿¡ È£Ãâ (ÁÖÀÔ)
+        /// UIManagerê°€ Instantiate ì´í›„ì— í˜¸ì¶œ (ì„¤ì •)
         /// </summary>
         public virtual void Init(Transform anchor)
         {
             if (m_CanvasGroup == null) m_CanvasGroup = GetComponent<CanvasGroup>();
 
-            // ÃÊ±â »óÅÂ´Â ²¨µÎ±â
+            // ì´ˆê¸° ìƒíƒœëŠ” ìˆ¨ê¹€
             m_CanvasGroup.alpha = 0;
             m_CanvasGroup.interactable = false;
             m_CanvasGroup.blocksRaycasts = false;
+
+            // Blocking Background ì´ˆê¸°í™” (ìŠ¤í”¼ë„ˆê°€ ìˆëŠ” ê²½ìš°)
+            if (!object.ReferenceEquals(m_BlockingBackground, null))
+            {
+                m_BlockingBackground.gameObject.SetActive(false);
+                m_BlockingBackground.raycastTarget = true; // í„°ì¹˜ ì°¨ë‹¨ í™œì„±í™”
+            }
         }
 
         public virtual void SetInfo(BaseUIData uiData)
@@ -55,7 +70,7 @@ namespace HexaStack.Core
             if (m_UIOpenAnim != null) m_UIOpenAnim.Play();
 
             m_OnShow?.Invoke();
-            m_OnShow = null; // 1È¸¼º ½ÇÇà ÈÄ ÃÊ±âÈ­ (¸Ş¸ğ¸® ´©¼ö ¹æÁö)
+            m_OnShow = null; // 1íšŒì„± ì‹¤í–‰ í›„ ì´ˆê¸°í™” (ë©”ëª¨ë¦¬ ëˆ„ìˆ˜ ë°©ì§€)
         }
 
         public virtual void CloseUI(bool isCloseAll = false)
@@ -66,11 +81,63 @@ namespace HexaStack.Core
             m_CanvasGroup.blocksRaycasts = false;
         }
 
-        // ¹öÆ° OnClick¿¡ ¿¬°á¿ë
+        // ë²„íŠ¼ OnClickì— ì—°ê²°ìš©
         public virtual void OnClickCloseButton()
         {
-            // Àü¿ª ¸Å´ÏÀú¿¡°Ô ³ª¸¦ ´İ¾Æ´Ş¶ó°í ¿äÃ» (Å¸ÀÔ ±â¹İ)
+            // ìŠ¤í”¼ë„ˆê°€ í‘œì‹œ ì¤‘ì´ë©´ ë‹«ê¸° ë¶ˆê°€ (ë¡œë”© ì¤‘ì—ëŠ” ë‹«ê¸° ë°©ì§€)
+            if (!object.ReferenceEquals(m_Spinner, null) && m_Spinner.IsActive)
+            {
+                return; // ë¡œë”© ì¤‘ì—ëŠ” ë‹«ê¸° ë¶ˆê°€
+            }
+
+            // ì´í›„ UIManagerë¡œ ê°€ì„œ ë‹«ì•„ë‹¬ë¼ê³  ìš”ì²­ (íƒ€ì… ì•ˆì •ì„±)
             UIManager.Instance.CloseUI(this);
         }
+
+        #region Spinner Helper Methods (Optional)
+
+        /// <summary>
+        /// ìŠ¤í”¼ë„ˆ í‘œì‹œ (Blocking UI - í™”ë©´ í„°ì¹˜ ë§‰ìŒ)
+        /// [ë¡œë”© UI ë²•ì¹™] 1~3ì´ˆ ì§§ì€ ë¡œë”© ì‹œ ì‚¬ìš©
+        /// [ìµœì í™”] NO Marshaling: object.ReferenceEquals ì‚¬ìš©
+        /// </summary>
+        protected void ShowSpinner()
+        {
+            if (!object.ReferenceEquals(m_Spinner, null))
+            {
+                m_Spinner.Show();
+            }
+
+            // Blocking Background í‘œì‹œ (í„°ì¹˜ ì°¨ë‹¨)
+            if (!object.ReferenceEquals(m_BlockingBackground, null))
+            {
+                m_BlockingBackground.gameObject.SetActive(true);
+            }
+        }
+
+        /// <summary>
+        /// ìŠ¤í”¼ë„ˆ ìˆ¨ê¹€
+        /// [ìµœì í™”] NO Marshaling: object.ReferenceEquals ì‚¬ìš©
+        /// </summary>
+        protected void HideSpinner()
+        {
+            if (!object.ReferenceEquals(m_Spinner, null))
+            {
+                m_Spinner.Hide();
+            }
+
+            // Blocking Background ìˆ¨ê¹€
+            if (!object.ReferenceEquals(m_BlockingBackground, null))
+            {
+                m_BlockingBackground.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// ìŠ¤í”¼ë„ˆ í™œì„±í™” ìƒíƒœ í™•ì¸
+        /// </summary>
+        protected bool IsSpinnerActive => !object.ReferenceEquals(m_Spinner, null) && m_Spinner.IsActive;
+
+        #endregion
     }
 }

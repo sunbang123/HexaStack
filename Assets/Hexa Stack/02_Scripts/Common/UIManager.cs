@@ -7,15 +7,18 @@ namespace HexaStack.Core
 {
     public class UIManager : SingletonBehaviour<UIManager>
     {
-        [Header("Global Canvas")]
-        [SerializeField] private Canvas _globalCanvas;
+        [Header("UI Canvas")]
+        [Tooltip("ëª¨ë“  UIê°€ ìƒì„±ë˜ëŠ” Canvas (Global/Local UI ëª¨ë‘ ì´ Canvasì— ìƒì„±ë¨)")]
+        [SerializeField] private Canvas _uiCanvas;
 
-        // 1. ÇÁ¸®ÆÕ ÁÖ¼Ò¸¦ Å¸ÀÔº°·Î º¸°üÇÏ´Â Lookup Table
-        // Key: ÄÄÆ÷³ÍÆ® Å¸ÀÔ, Value: ÇØ´ç ÄÄÆ÷³ÍÆ®°¡ ºÙÀº ÇÁ¸®ÆÕ ¿øº»
+        // 1. í”„ë¦¬íŒ¹ ë ˆì§€ìŠ¤íŠ¸ë¦¬: íƒ€ì…ë³„ í”„ë¦¬íŒ¹ ì €ì¥
         private Dictionary<Type, Component> _prefabRegistry = new Dictionary<Type, Component>();
 
-        // 2. ÀÌ¹Ì »ı¼ºµÈ ÀÎ½ºÅÏ½º¸¦ °ü¸®ÇÏ´Â Ä³½Ã (¿ÀºêÁ§Æ® Ç®¸µ)
+        // 2. ìƒì„±ëœ UI ì¸ìŠ¤í„´ìŠ¤ ìºì‹œ
         private Dictionary<Type, Component> _uiCache = new Dictionary<Type, Component>();
+
+        // 3. Global UI íƒ€ì… ì¶”ì  (ì”¬ ì „í™˜ ì‹œì—ë„ ìœ ì§€)
+        private HashSet<Type> _globalUITypes = new HashSet<Type>();
 
         protected override void Init()
         {
@@ -24,39 +27,66 @@ namespace HexaStack.Core
         }
 
         /// <summary>
-        /// ÃÊ±â ¼³Á¤: ÇÁ¸®ÆÕµéÀ» µî·ÏÇÔ (ÄÄÆÄÀÏ Å¸ÀÓ¿¡ Å¸ÀÔ È®Á¤)
+        /// Global UI ë“±ë¡ (BootManagerì—ì„œ í˜¸ì¶œ)
+        /// </summary>
+        public void RegisterPrefabGlobal<T>(T prefab) where T : Component
+        {
+            Type type = typeof(T);
+            _prefabRegistry[type] = prefab;
+            _globalUITypes.Add(type);
+            Logger.Log($"[UIManager] Global UI ë“±ë¡: {type.Name}");
+        }
+
+        /// <summary>
+        /// Local UI ë“±ë¡ (ì”¬ë³„ Controllerì—ì„œ í˜¸ì¶œ)
+        /// </summary>
+        public void RegisterPrefabLocal<T>(T prefab) where T : Component
+        {
+            Type type = typeof(T);
+            _prefabRegistry[type] = prefab;
+            // Globalì´ ì•„ë‹ˆë©´ Localë¡œ ê°„ì£¼
+            if (!_globalUITypes.Contains(type))
+            {
+                Logger.Log($"[UIManager] Local UI ë“±ë¡: {type.Name}");
+            }
+        }
+
+        /// <summary>
+        /// [Deprecated] RegisterPrefabLocal ì‚¬ìš© ê¶Œì¥
         /// </summary>
         public void RegisterPrefab<T>(T prefab) where T : Component
         {
-            _prefabRegistry[typeof(T)] = prefab;
+            RegisterPrefabLocal(prefab);
         }
 
-        public T OpenUI<T>(BaseUIData data = null) where T : BaseUI // T´Â ¹«Á¶°Ç BaseUI¿©¾ß ÇÔ
+        /// <summary>
+        /// UI ì—´ê¸° (ì œë„¤ë¦­ íƒ€ì… ê¸°ë°˜ - NO String, NO Marshaling)
+        /// [ì„±ëŠ¥ ìµœì í™”] Dictionary Lookup O(1), ìºì‹œ íˆíŠ¸ ì‹œ ì¦‰ì‹œ ë°˜í™˜
+        /// </summary>
+        public T OpenUI<T>(BaseUIData data = null) where T : BaseUI
         {
             Type type = typeof(T);
 
-            // 1. Ä³½Ã(Ç®) È®ÀÎ: ¸¶¼£¸µ ¾øÀÌ Áï½Ã ÁÖ¼Ò ¹İÈ¯
+            // 1. ìºì‹œ íˆíŠ¸: ì´ë¯¸ ìƒì„±ëœ ì¸ìŠ¤í„´ìŠ¤ ì¬ì‚¬ìš© (NO Instantiate)
             if (_uiCache.TryGetValue(type, out Component cachedUI))
             {
                 T ui = (T)cachedUI;
                 ui.gameObject.SetActive(true);
-
                 SetupAndShow(ui, data);
-
                 return ui;
             }
 
-            // 2. ·¹Áö½ºÆ®¸®(ÇÁ¸®ÆÕ) È®ÀÎ
+            // 2. í”„ë¦¬íŒ¹ ë ˆì§€ìŠ¤íŠ¸ë¦¬ ì¡°íšŒ (NO String, Type ê¸°ë°˜)
             if (!_prefabRegistry.TryGetValue(type, out Component prefab))
             {
-                Logger.LogError($"[UIManager] {type} ÇÁ¸®ÆÕ µî·Ï ´©¶ô!");
+                Logger.LogError($"[UIManager] {type.Name} í”„ë¦¬íŒ¹ì´ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
                 return null;
             }
 
-            // 3. »ı¼º°ú µ¿½Ã¿¡ ÄÄÆ÷³ÍÆ® È¹µæ (¸¶¼£¸µ ÃÖ¼ÒÈ­)
-            T instance = Instantiate((T)prefab, _globalCanvas.transform);
+            // 3. ì¸ìŠ¤í„´ìŠ¤ ìƒì„± ë° ìºì‹œ ì €ì¥
+            T instance = Instantiate((T)prefab, _uiCanvas.transform);
             _uiCache[type] = instance;
-            instance.Init(_globalCanvas.transform);
+            instance.Init(_uiCanvas.transform);
 
             SetupAndShow(instance, data);
 
@@ -64,26 +94,107 @@ namespace HexaStack.Core
         }
 
         /// <summary>
-        /// [Helper] UI ¿­±â Á÷ÀüÀÇ °øÅë ·ÎÁ÷ (¿Àµğ¿À, µ¥ÀÌÅÍ ÁÖÀÔ, Show È£Ãâ)
+        /// UIë¥¼ ë¯¸ë¦¬ ìƒì„±í•˜ì—¬ ìºì‹œì— ì €ì¥ (Prewarm)
+        /// [ì„±ëŠ¥ ìµœì í™”] ì²« OpenUI í˜¸ì¶œ ì‹œ Instantiate ì§€ì—° ì œê±°
+        /// </summary>
+        public void Prewarm<T>() where T : BaseUI
+        {
+            Type type = typeof(T);
+
+            // ì´ë¯¸ ìºì‹œì— ìˆìœ¼ë©´ ìŠ¤í‚µ (ì¤‘ë³µ ìƒì„± ë°©ì§€)
+            if (_uiCache.ContainsKey(type))
+            {
+                Logger.Log($"[UIManager] {type.Name} is already prewarmed.");
+                return;
+            }
+
+            // í”„ë¦¬íŒ¹ ë ˆì§€ìŠ¤íŠ¸ë¦¬ ì¡°íšŒ (NO String)
+            if (!_prefabRegistry.TryGetValue(type, out Component prefab))
+            {
+                Logger.LogError($"[UIManager] {type.Name} í”„ë¦¬íŒ¹ì´ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
+                return;
+            }
+
+            // ë¯¸ë¦¬ ìƒì„±í•˜ì—¬ ìºì‹œì— ì €ì¥ (ë¹„í™œì„±í™” ìƒíƒœë¡œ)
+            T instance = Instantiate((T)prefab, _uiCanvas.transform);
+            instance.gameObject.SetActive(false);
+            _uiCache[type] = instance;
+            instance.Init(_uiCanvas.transform);
+
+            Logger.Log($"[UIManager] {type.Name} prewarmed.");
+        }
+
+        /// <summary>
+        /// Local UI í•´ì œ (ì”¬ ì „í™˜ ì‹œ í˜¸ì¶œ)
+        /// Global UIëŠ” ìœ ì§€í•˜ê³  Local UIë§Œ ì œê±°
+        /// [ìµœì í™”] ë‹¨ì¼ ìˆœíšŒë¡œ ì²˜ë¦¬í•˜ì—¬ ì„±ëŠ¥ í–¥ìƒ
+        /// </summary>
+        public void UnregisterLocalUIs()
+        {
+            // [ì„±ëŠ¥ ìµœì í™”] Dictionary ìˆœíšŒ ì¤‘ ìˆ˜ì •ì„ ìœ„í•´ í‚¤ë¥¼ ë¨¼ì € ìˆ˜ì§‘
+            // í•˜ì§€ë§Œ ë” íš¨ìœ¨ì ìœ¼ë¡œ: ì§ì ‘ ì œê±°í•˜ë©´ì„œ ìˆœíšŒ (ì—­ìˆœ ì²˜ë¦¬)
+            var prefabKeys = new List<Type>(_prefabRegistry.Keys);
+            var cacheKeys = new List<Type>(_uiCache.Keys);
+
+            // Local UI í”„ë¦¬íŒ¹ ë ˆì§€ìŠ¤íŠ¸ë¦¬ì—ì„œ ì œê±°
+            for (int i = prefabKeys.Count - 1; i >= 0; i--)
+            {
+                Type type = prefabKeys[i];
+                if (!_globalUITypes.Contains(type))
+                {
+                    _prefabRegistry.Remove(type);
+                    Logger.Log($"[UIManager] Local UI í”„ë¦¬íŒ¹ í•´ì œ: {type.Name}");
+                }
+            }
+
+            // Local UI ì¸ìŠ¤í„´ìŠ¤ ì œê±° (ìºì‹œì—ì„œ)
+            for (int i = cacheKeys.Count - 1; i >= 0; i--)
+            {
+                Type type = cacheKeys[i];
+                if (!_globalUITypes.Contains(type))
+                {
+                    if (_uiCache.TryGetValue(type, out Component ui) && !object.ReferenceEquals(ui, null))
+                    {
+                        if (!object.ReferenceEquals(ui.gameObject, null))
+                        {
+                            Destroy(ui.gameObject);
+                        }
+                    }
+                    _uiCache.Remove(type);
+                    Logger.Log($"[UIManager] Local UI ì¸ìŠ¤í„´ìŠ¤ ì œê±°: {type.Name}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// [Helper] UI ì—´ê¸° ê³¼ì •ì˜ ê³µí†µ ë¡œì§ (ì˜¤ë””ì˜¤, ë°ì´í„° ì„¤ì •, Show í˜¸ì¶œ)
+        /// [ìµœì í™”] NO Marshaling: object.ReferenceEquals ì‚¬ìš©
         /// </summary>
         private void SetupAndShow<T>(T ui, BaseUIData data) where T : BaseUI
         {
-            // [Audio Injection] ¿©±â¼­ ÇÑ ¹ø¸¸ °ü¸®ÇÏ¸é µÊ!
-            if (!object.ReferenceEquals(AudioManager.Instance, null))
+            // [Audio Injection] NO Marshaling: object.ReferenceEquals ì‚¬ìš©
+            var audio = AudioManager.Instance;
+            if (!object.ReferenceEquals(audio, null))
             {
-                AudioManager.Instance.PlaySFX(SFX.UIButtonClick);
+                audio.PlaySFX(SFX.UIButtonClick);
             }
 
             ui.SetInfo(data);
             ui.ShowUI();
         }
 
+        /// <summary>
+        /// UI ë‹«ê¸° (NO Marshaling: object.ReferenceEquals ì‚¬ìš©)
+        /// </summary>
         public void CloseUI(BaseUI ui)
         {
             if (object.ReferenceEquals(ui, null)) return;
             HandleClose(ui);
         }
 
+        /// <summary>
+        /// UI ë‹«ê¸° ì²˜ë¦¬ (ë¹„í™œì„±í™”, ë¡œê·¸)
+        /// </summary>
         private void HandleClose(BaseUI ui)
         {
             ui.CloseUI();

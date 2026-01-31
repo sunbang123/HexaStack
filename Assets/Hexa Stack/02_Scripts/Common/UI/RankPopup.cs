@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using HexaStack.Core; // BaseUI°¡ ÀÖ´Â ³×ÀÓ½ºÆäÀÌ½º (ºê·Î ÇÁ·ÎÁ§Æ®¿¡ ¸Â°Ô È®ÀÎ!)
+using HexaStack.Core;
 
 namespace HexaStack.Views
 {
@@ -11,18 +11,18 @@ namespace HexaStack.Views
         [Header(" UI Elements ")]
         [SerializeField] private Button _closeBtn;
         [SerializeField] private ScrollRect _scrollView;
-        [SerializeField] private Transform _contentRoot; // ¾ÆÀÌÅÛµéÀÌ »ı¼ºµÉ ºÎ¸ğ (Content)
+        [SerializeField] private Transform _contentRoot; // ì•„ì´í…œë“¤ì´ ìƒì„±ë  ê³³ (Content)
 
         [Header(" Prefabs ")]
-        [SerializeField] private GameObject _rankItemPrefab; // °³º° ·¹º§/¾÷Àû ¾ÆÀÌÅÛ ÇÁ¸®ÆÕ
+        [SerializeField] private GameObject _rankItemPrefab; // ê°ê°ì˜ ë­í¬/ë“±ê¸‰ ì•„ì´í…œ í”„ë¦¬íŒ¹
 
-        // ÃÊ±âÈ­ ¿©ºÎ Ã¼Å©
+        // ì´ˆê¸°í™” ì—¬ë¶€ í™•ì¸
         private bool _isInitialized = false;
 
         private void Awake()
         {
-            // ´İ±â ¹öÆ° ¿¬°á (BaseUI¿¡ Close ±â´ÉÀÌ ÀÖ´Ù°í °¡Á¤ÇÏ°Å³ª Á÷Á¢ ±¸Çö)
-            if (_closeBtn != null)
+            // ë‹«ê¸° ë²„íŠ¼ ì—°ê²°
+            if (!object.ReferenceEquals(_closeBtn, null))
             {
                 _closeBtn.onClick.AddListener(OnCloseBtnClicked);
             }
@@ -30,54 +30,65 @@ namespace HexaStack.Views
 
         private void OnEnable()
         {
-            // ÆË¾÷ÀÌ ÄÑÁú ¶§¸¶´Ù µ¥ÀÌÅÍ¸¦ °»½ÅÇÏ°í ½Í´Ù¸é ¿©±â¼­ È£Ãâ
+            // íŒì—…ì´ í™œì„±í™”ë  ë•Œë§ˆë‹¤ ë°ì´í„°ë¥¼ ê°±ì‹ 
+            // ì¦‰ì‹œ í‘œì‹œ (Prewarmìœ¼ë¡œ ì¸í•´ ë¹ ë¥´ê²Œ í‘œì‹œë¨)
             RefreshUI();
         }
 
         /// <summary>
-        /// UI µ¥ÀÌÅÍ °»½Å (Àá±ä ·¹º§/¿­¸° ·¹º§ Ç¥½Ã)
+        /// UI ë°ì´í„° ê°±ì‹  (ì ê¸ˆ ë­í¬/ì—´ë¦° ë­í¬ í‘œì‹œ)
+        /// [ë¡œë”© UI ë²•ì¹™] ë°ì´í„° ë¡œë”© ì‹œ ìŠ¤í”¼ë„ˆ í‘œì‹œ (1~3ì´ˆ)
         /// </summary>
         public void RefreshUI()
         {
-            // 1. ±âÁ¸ ¾ÆÀÌÅÛ Ã»¼Ò (PoolingÀ» ¾´´Ù¸é ¹İÈ¯ ·ÎÁ÷À¸·Î º¯°æ)
+            // 1. ê¸°ì¡´ ì•„ì´í…œ ì œê±° (Poolingì„ ì“´ë‹¤ë©´ í’€ë§ ë°©ì‹ìœ¼ë¡œ ë³€ê²½)
             foreach (Transform child in _contentRoot)
             {
                 Destroy(child.gameObject);
             }
 
-            // 2. µ¥ÀÌÅÍ °¡Á®¿À±â (¿¹: LevelManager³ª UserDataManager¿¡¼­)
-            // ÀÓ½Ã·Î ´õ¹Ì µ¥ÀÌÅÍ 10°³¸¦ µ¹¸°´Ù°í °¡Á¤ÇÒ°Ô.
-            int maxLevel = 10;
-            int currentLevel = 5; // À¯Àú°¡ ÇöÀç µµ´ŞÇÑ ·¹º§ (¿¹½Ã)
-
-            for (int i = 1; i <= maxLevel; i++)
-            {
-                CreateAchieveItem(i, i <= currentLevel);
-            }
+            // 2. ë°ì´í„° ë¡œë”© ì‹œì‘ (ì„œë²„ í†µì‹  ë“±)
+            StartCoroutine(LoadRankDataCoroutine());
         }
 
+        /// <summary>
+        /// ë­í‚¹ ë°ì´í„° ë¡œë”© ì½”ë£¨í‹´
+        /// [ë¡œë”© UI ë²•ì¹™] 1~3ì´ˆ ì§§ì€ ë¡œë”©ì´ë¯€ë¡œ ìŠ¤í”¼ë„ˆ ì‚¬ìš©
+        /// </summary>
+        private System.Collections.IEnumerator LoadRankDataCoroutine()
+        {
+            // ìŠ¤í”¼ë„ˆ í‘œì‹œ (Blocking UI)
+            ShowSpinner();
+
+            // TODO: ì‹¤ì œ ì„œë²„ í†µì‹  ë˜ëŠ” ë°ì´í„° ë¡œë”© ë¡œì§
+            // ì˜ˆ: yield return StartCoroutine(RankDataManager.Instance.FetchRankData());
+            
+            // ì„ì‹œ: 1~2ì´ˆ ì‹œë®¬ë ˆì´ì…˜ (ì‹¤ì œë¡œëŠ” ì„œë²„ í†µì‹  ì‹œê°„)
+            yield return new UnityEngine.WaitForSeconds(1.5f);
+
+            // 3. ë°ì´í„° ê°€ì ¸ì˜¤ê¸° (ì˜ˆ: LevelManagerë‚˜ UserDataManagerì—ì„œ)
+            // ì„ì‹œë¡œ ë”ë¯¸ ë°ì´í„° 10ê°œë¥¼ ê°€ì ¸ì˜¨ë‹¤ê³  ê°€ì •í• ê²Œ.
+
+            HideSpinner();
+        }
+
+        /// <summary>
+        /// ë­í¬ ì•„ì´í…œ ìƒì„±
+        /// [ìµœì í™”] NO Marshaling: object.ReferenceEquals ì‚¬ìš©
+        /// </summary>
         private void CreateAchieveItem(int levelIndex, bool isUnlocked)
         {
-            if (_rankItemPrefab == null) return;
+            // NO Marshaling: object.ReferenceEquals ì‚¬ìš©
+            if (object.ReferenceEquals(_rankItemPrefab, null)) return;
 
             GameObject itemObj = Instantiate(_rankItemPrefab, _contentRoot);
 
-            // ¿©±â¼­ ¾ÆÀÌÅÛ ½ºÅ©¸³Æ®¸¦ °¡Á®¿Í¼­ ¼¼ÆÃ (AchieveItem ½ºÅ©¸³Æ®°¡ ÀÖ´Ù¸é)
-            // var itemScript = itemObj.GetComponent<AchieveItem>();
-            // itemScript.SetData(levelIndex, isUnlocked);
-
-            // (½ºÅ©¸³Æ® ¾øÀ¸¸é °£´ÜÈ÷ ÀÌ¸§¸¸ º¯°æ)
-            itemObj.name = $"Level_Item_{levelIndex}_{(isUnlocked ? "Open" : "Locked")}";
         }
 
         private void OnCloseBtnClicked()
         {
-            // UIManager¸¦ ÅëÇØ ´İ°Å³ª, ½º½º·Î ²¨Áü
-            // ¸¸¾à UIManager ±¸Á¶°¡ CloseUI<T>()¸¦ Áö¿øÇÑ´Ù¸é:
-            // UIManager.Instance.CloseUI<AchievePopup>();
-
-            // ´Ü¼øÈ÷ ²ô´Â °Å¶ó¸é:
-            this.gameObject.SetActive(false);
+            // BaseUIì˜ OnClickCloseButtonì´ ìŠ¤í”¼ë„ˆ ì²´í¬ë¥¼ ìë™ìœ¼ë¡œ ì²˜ë¦¬í•¨
+            OnClickCloseButton();
         }
     }
 }
