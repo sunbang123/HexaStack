@@ -2,6 +2,9 @@
 {
     using UnityEngine;
     using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM
+    using UnityEngine.InputSystem;
+#endif
 
     public class Viewer : MonoBehaviour
     {
@@ -30,6 +33,10 @@
 
             screenWidth     = Screen.width;
             screenHeight    = Screen.height;
+
+#if ENABLE_INPUT_SYSTEM
+            UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Enable();
+#endif
         }
 
         public void Initialize()
@@ -143,7 +150,12 @@
 
         private void CheckGesture()
         {
-            if(Input.touchCount == ViewerConst.GESTURE_TOUCH_COUNT)
+#if ENABLE_INPUT_SYSTEM
+            int touchCount = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count;
+#else
+            int touchCount = Input.touchCount;
+#endif
+            if(touchCount == ViewerConst.GESTURE_TOUCH_COUNT)
             {
                 if(isTouchBegin == false)
                 {
@@ -169,10 +181,17 @@
 
         private void CheckKey()
         {
+#if ENABLE_INPUT_SYSTEM
+            if(Keyboard.current != null && Keyboard.current.backquoteKey.wasPressedThisFrame)
+            {
+                Show(true);
+            }
+#else
             if(Input.GetKeyDown(KeyCode.BackQuote) == true)
             {
                 Show(true);
             }
+#endif
         }
 
         public void Show()
