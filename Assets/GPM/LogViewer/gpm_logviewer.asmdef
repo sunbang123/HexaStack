@@ -1,7 +1,8 @@
 {
     "name": "gpm_logviewer",
     "references": [
-        "gpm_ui"
+        "gpm_ui",
+        "Unity.InputSystem"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
@@ -10,5 +11,12 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "",
+            "define": "ENABLE_INPUT_SYSTEM"
+        }
+    ]
 }
