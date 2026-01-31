@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace HexaStack.Core
 {
@@ -25,11 +24,8 @@ namespace HexaStack.Core
         [SerializeField] protected Animation m_UIOpenAnim;
 
         [Header("Loading UI (Optional)")]
-        [Tooltip("데이터 로딩 중 표시할 스피너 (1~3초 짧은 로딩용) - 선택적")]
-        [SerializeField] protected BaseSpinner m_Spinner; // 스피너 참조 (Inspector에서 할당)
-
-        [Tooltip("스피너 표시 시 화면 터치를 막을 배경 (Blocking UI) - 선택적")]
-        [SerializeField] protected UnityEngine.UI.Image m_BlockingBackground; // 투명 배경으로 터치 차단
+        [Tooltip("로딩 스피너 프리팹 (배경+애니메이션 포함) - SetActive로 표시/숨김")]
+        [SerializeField] protected GameObject m_SpinnerObject;
 
         protected Action m_OnShow;
         protected Action m_OnClose;
@@ -46,11 +42,10 @@ namespace HexaStack.Core
             m_CanvasGroup.interactable = false;
             m_CanvasGroup.blocksRaycasts = false;
 
-            // Blocking Background 초기화 (스피너가 있는 경우)
-            if (!object.ReferenceEquals(m_BlockingBackground, null))
+            // 스피너 초기 상태: 숨김
+            if (!object.ReferenceEquals(m_SpinnerObject, null))
             {
-                m_BlockingBackground.gameObject.SetActive(false);
-                m_BlockingBackground.raycastTarget = true; // 터치 차단 활성화
+                m_SpinnerObject.SetActive(false);
             }
         }
 
@@ -85,7 +80,8 @@ namespace HexaStack.Core
         public virtual void OnClickCloseButton()
         {
             // 스피너가 표시 중이면 닫기 불가 (로딩 중에는 닫기 방지)
-            if (!object.ReferenceEquals(m_Spinner, null) && m_Spinner.IsActive)
+            // [최적화] object.ReferenceEquals: 마샬링 없이 null 체크
+            if (!object.ReferenceEquals(m_SpinnerObject, null) && m_SpinnerObject.activeSelf)
             {
                 return; // 로딩 중에는 닫기 불가
             }
@@ -97,46 +93,31 @@ namespace HexaStack.Core
         #region Spinner Helper Methods (Optional)
 
         /// <summary>
-        /// 스피너 표시 (Blocking UI - 화면 터치 막음)
-        /// [로딩 UI 법칙] 1~3초 짧은 로딩 시 사용
-        /// [최적화] NO Marshaling: object.ReferenceEquals 사용
+        /// 스피너 표시 (배경+애니메이션 포함 프리팹)
         /// </summary>
         protected void ShowSpinner()
         {
-            if (!object.ReferenceEquals(m_Spinner, null))
+            if (m_SpinnerObject != null)
             {
-                m_Spinner.Show();
-            }
-
-            // Blocking Background 표시 (터치 차단)
-            if (!object.ReferenceEquals(m_BlockingBackground, null))
-            {
-                m_BlockingBackground.gameObject.SetActive(true);
+                m_SpinnerObject.SetActive(true);
             }
         }
 
         /// <summary>
         /// 스피너 숨김
-        /// [최적화] NO Marshaling: object.ReferenceEquals 사용
         /// </summary>
         protected void HideSpinner()
         {
-            if (!object.ReferenceEquals(m_Spinner, null))
+            if (m_SpinnerObject != null)
             {
-                m_Spinner.Hide();
-            }
-
-            // Blocking Background 숨김
-            if (!object.ReferenceEquals(m_BlockingBackground, null))
-            {
-                m_BlockingBackground.gameObject.SetActive(false);
+                m_SpinnerObject.SetActive(false);
             }
         }
 
         /// <summary>
         /// 스피너 활성화 상태 확인
         /// </summary>
-        protected bool IsSpinnerActive => !object.ReferenceEquals(m_Spinner, null) && m_Spinner.IsActive;
+        protected bool IsSpinnerActive => m_SpinnerObject != null && m_SpinnerObject.activeSelf;
 
         #endregion
     }
