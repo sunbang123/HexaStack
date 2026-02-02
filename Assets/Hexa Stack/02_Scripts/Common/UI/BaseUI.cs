@@ -43,7 +43,9 @@ namespace HexaStack.Core
             m_CanvasGroup.blocksRaycasts = false;
 
             // 스피너 초기 상태: 숨김
-            if (!object.ReferenceEquals(m_SpinnerObject, null))
+            // [주의] Unity Object는 object.ReferenceEquals 대신 일반 null 체크 사용
+            // (SerializeField가 미할당 시 "fake null" 상태이므로)
+            if (m_SpinnerObject != null)
             {
                 m_SpinnerObject.SetActive(false);
             }
@@ -80,8 +82,7 @@ namespace HexaStack.Core
         public virtual void OnClickCloseButton()
         {
             // 스피너가 표시 중이면 닫기 불가 (로딩 중에는 닫기 방지)
-            // [최적화] object.ReferenceEquals: 마샬링 없이 null 체크
-            if (!object.ReferenceEquals(m_SpinnerObject, null) && m_SpinnerObject.activeSelf)
+            if (m_SpinnerObject != null && m_SpinnerObject.activeSelf)
             {
                 return; // 로딩 중에는 닫기 불가
             }
