@@ -13,9 +13,9 @@ public enum BuildType
 }
 public class BuildManager : Editor
 {
-    // DEV용
+    // DEV
     public const string DEV_SCRIPTING_DEFINE_SYMBOL = "DOTWEEN;DEV_VER";
-    // 출시용
+    // REAL
     public const string REAL_SCRIPTING_DEFINE_SYMBOL = "DOTWEEN";
 
     private static BuildType m_BuildType = BuildType.DEV;
@@ -37,6 +37,8 @@ public class BuildManager : Editor
         EditorUserBuildSettings.buildAppBundle = true;
         PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, DEV_SCRIPTING_DEFINE_SYMBOL);
 
+        SetReleaseKeystore();
+
         m_BuildType = BuildType.TEST;
     }
 
@@ -46,23 +48,40 @@ public class BuildManager : Editor
         EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
         EditorUserBuildSettings.buildAppBundle = true;
         PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, REAL_SCRIPTING_DEFINE_SYMBOL);
+
+        SetReleaseKeystore();
+
+        m_BuildType = BuildType.REAL;
     }
 
-    [MenuItem("Build/Set AOS Build")]
+    /// <summary>
+    /// Set Release Keystore
+    /// </summary>
+    private static void SetReleaseKeystore()
+    {
+        PlayerSettings.Android.useCustomKeystore = true;
+        PlayerSettings.Android.keystoreName = "Builds/AOS/sunzero.keystore";
+        PlayerSettings.Android.keystorePass = "Tjsdud0314!";
+        PlayerSettings.Android.keyaliasName = "cosmic hexa puzzle";
+        PlayerSettings.Android.keyaliasPass = "Tjsdud0314!";
+    }
+
+    [MenuItem("Build/Start AOS Build")]
     public static void StartAOSBuild()
     {
-        PlayerSettings.Android.keystoreName = "Builds/AOS/sunzero.keystore";
-        PlayerSettings.Android.keystorePass = "";
-        PlayerSettings.Android.keyaliasName = "Cosmic Hexa Puzzle";
-        PlayerSettings.Android.keyaliasPass = "";
+        // Set Release Keystore if not set
+        if (!PlayerSettings.Android.useCustomKeystore)
+        {
+            SetReleaseKeystore();
+        }
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = new[]
         {
             "Assets/Hexa Stack/01_Scenes/Boot.unity",
-            "Assets/Hexa Stack/01_Scenes/InGame.unity",
             "Assets/Hexa Stack/01_Scenes/Loading.unity",
             "Assets/Hexa Stack/01_Scenes/Lobby.unity",
+            "Assets/Hexa Stack/01_Scenes/InGame.unity",
         };
         buildPlayerOptions.target = BuildTarget.Android;
         string fileExtention = string.Empty;
