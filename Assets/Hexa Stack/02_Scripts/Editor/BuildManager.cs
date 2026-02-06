@@ -37,7 +37,6 @@ public class BuildManager : Editor
         EditorUserBuildSettings.buildAppBundle = true;
         PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, DEV_SCRIPTING_DEFINE_SYMBOL);
 
-        SetReleaseKeystore();
 
         m_BuildType = BuildType.TEST;
     }
@@ -48,8 +47,6 @@ public class BuildManager : Editor
         EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
         EditorUserBuildSettings.buildAppBundle = true;
         PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, REAL_SCRIPTING_DEFINE_SYMBOL);
-
-        SetReleaseKeystore();
 
         m_BuildType = BuildType.REAL;
     }
@@ -69,11 +66,7 @@ public class BuildManager : Editor
     [MenuItem("Build/Start AOS Build")]
     public static void StartAOSBuild()
     {
-        // Set Release Keystore if not set
-        if (!PlayerSettings.Android.useCustomKeystore)
-        {
-            SetReleaseKeystore();
-        }
+        SetReleaseKeystore();
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = new[]
