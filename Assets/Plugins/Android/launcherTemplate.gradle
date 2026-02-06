@@ -1,0 +1,102 @@
+apply plugin: 'com.android.application'
+**APPLY_PLUGINS**
+
+dependencies {
+    implementation project(':unityLibrary')
+    implementation project(':unityLibrary:FirebaseApp.androidlib')
+}
+
+// Force Kotlin/Coroutines versions to avoid R8 dexing crashes
+configurations.all {
+    resolutionStrategy {
+        force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-reflect:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-parcelize-runtime:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-android-extensions-runtime:1.8.22'
+        force 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3'
+        force 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+        force 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3'
+        force 'com.google.firebase:firebase-common:20.4.2'
+        force 'com.google.firebase:firebase-auth:22.3.1'
+        force 'com.google.firebase:firebase-config:21.6.0'
+        force 'com.google.firebase:firebase-firestore:24.9.1'
+        force 'com.google.firebase:firebase-analytics:21.5.0'
+    }
+}
+
+android {
+    namespace "com.SunZero.CosmicHexaPuzzle"
+    ndkPath "**NDKPATH**"
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdkVersion **MINSDKVERSION**
+        targetSdkVersion **TARGETSDKVERSION**
+        applicationId 'com.SunZero.CosmicHexaPuzzle'
+        ndk {
+            abiFilters **ABIFILTERS**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+    }
+
+    aaptOptions {
+        noCompress = ['.unity3d', '.ress', '.resource', '.obb', '.bundle', '.unityexp'] + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('C:/Users/user/UnityGame/HexaStack/Builds/AOS/sunzero.keystore')
+            storePassword 'Tjsdud0314!'
+            keyAlias 'cosmic hexa puzzle'
+            keyPassword 'Tjsdud0314!'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            signingConfig signingConfigs.release
+            jniDebuggable true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        doNotStrip '*/arm64-v8a/*.so'
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+}

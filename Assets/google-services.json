@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "203188081204",
+    "project_id": "cosmic-hexa-puzzle",
+    "storage_bucket": "cosmic-hexa-puzzle.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203188081204:android:0faa9aa5825ad9a2713061",
+        "android_client_info": {
+          "package_name": "com.SunZero.CosmicHexaPuzzle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF4Yk_nZe-sA8c7cNN50LGMBX8DfvY_NM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

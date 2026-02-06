@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using HexaStack.Core;
+using Firebase;
+using Firebase.Extensions;
 using Logger = HexaStack.Core.Logger;
 
 namespace HexaStack.Scenes.Boot
@@ -23,11 +25,32 @@ namespace HexaStack.Scenes.Boot
         [SerializeField] private Views.OptionPopup _optionPopupPrefab;
         [SerializeField] private Views.NoticePopup _noticePopupPrefab;
 
+        private bool _firebaseReady;
+
         private void Start()
         {
+            InitializeFirebase();
             InitializeGlobalSystems();
             InitializeGlobalManagers();
             StartCoroutine(SplashProcess());
+        }
+
+        private void InitializeFirebase()
+        {
+            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+            {
+                var status = task.Result;
+                if (status == DependencyStatus.Available)
+                {
+                    FirebaseApp app = FirebaseApp.DefaultInstance;
+                    _firebaseReady = true;
+                    Logger.Log("[Boot] Firebase initialized.");
+                }
+                else
+                {
+                    Logger.LogError($"[Boot] Firebase dependencies not available: {status}");
+                }
+            });
         }
 
         private void InitializeGlobalSystems()

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="gcm_defaultSenderId" translatable="false">203188081204</string>
+  <string name="google_storage_bucket" translatable="false">cosmic-hexa-puzzle.firebasestorage.app</string>
+  <string name="project_id" translatable="false">cosmic-hexa-puzzle</string>
+  <string name="google_api_key" translatable="false">AIzaSyDF4Yk_nZe-sA8c7cNN50LGMBX8DfvY_NM</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDF4Yk_nZe-sA8c7cNN50LGMBX8DfvY_NM</string>
+  <string name="google_app_id" translatable="false">1:203188081204:android:0faa9aa5825ad9a2713061</string>
+</resources>
