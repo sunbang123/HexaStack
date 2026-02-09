@@ -3,6 +3,7 @@ using UnityEngine;
 using HexaStack.Core;
 using Firebase;
 using Firebase.Extensions;
+using HexaStack.Views;
 using Logger = HexaStack.Core.Logger;
 
 namespace HexaStack.Scenes.Boot
@@ -29,28 +30,9 @@ namespace HexaStack.Scenes.Boot
 
         private void Start()
         {
-            InitializeFirebase();
             InitializeGlobalSystems();
             InitializeGlobalManagers();
             StartCoroutine(SplashProcess());
-        }
-
-        private void InitializeFirebase()
-        {
-            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
-            {
-                var status = task.Result;
-                if (status == DependencyStatus.Available)
-                {
-                    FirebaseApp app = FirebaseApp.DefaultInstance;
-                    _firebaseReady = true;
-                    Logger.Log("[Boot] Firebase initialized.");
-                }
-                else
-                {
-                    Logger.LogError($"[Boot] Firebase dependencies not available: {status}");
-                }
-            });
         }
 
         private void InitializeGlobalSystems()
@@ -111,9 +93,65 @@ namespace HexaStack.Scenes.Boot
 
             yield return new WaitForSeconds(_logoDisplayTime);
 
+            // 외부 서비스 초기화 대기
+            var elapsed = 0f;
+            while (!CheckThirdPartyServiceInit() && elapsed < GlobalDefine.THIRD_PARTY_SERVICE_INIT_TIME)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            if (!CheckThirdPartyServiceInit())
+            {
+                Logger.LogError("[BootManager] Third-party service init failed.");
+                yield break;
+            }
+
+            // 앱 버전 검증
+            if (!ValidateAppVersion())
+            {
+                yield break;
+            }
+
             if (object.ReferenceEquals(SceneLoader.Instance, null)) yield break;
 
             SceneLoader.Instance.LoadScene(SceneType.Lobby);
+        }
+        private bool CheckThirdPartyServiceInit()
+        {
+            if (object.ReferenceEquals(FirebaseManager.Instance, null)) return false;
+            return FirebaseManager.Instance.IsInit();
+        }
+
+        private bool ValidateAppVersion()
+        {
+            bool result = false;
+
+            //if (Application.version == FirebaseManager.Instance.GetAppVersion())
+            //{
+            //    result = true;
+            //}
+            //else
+            {
+                var notice = UIManager.Instance.OpenUI<NoticePopup>();
+                if (!object.ReferenceEquals(notice, null))
+                {
+                    notice.Setup("App version is outdated.\nUpdate now?", () =>
+                    {
+#if UNITY_ANDROID
+                        Application.OpenURL(GlobalDefine.GOOGLE_PLAY_STORE);
+#elif UNITY_IOS
+                        Application.OpenURL(GlobalDefine.APPLE_APP_STORE);
+#endif
+                        Application.Quit();
+                    }
+                    ,() =>
+                    {
+                        Application.Quit();
+                    });
+                }
+            }
+            return result;
         }
     }
 }
