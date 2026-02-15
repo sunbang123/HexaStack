@@ -10,6 +10,7 @@ namespace HexaStack.Controllers
 {
     [Header("Elements")]
     private List<GridCell> updatedCells = new List<GridCell>();
+    private HashSet<GridCell> updatedCellSet = new HashSet<GridCell>();
 
     [Header("UI Elements")]
     public TMP_Text scoreText; // Reference to the TMP_Text element
@@ -48,7 +49,8 @@ namespace HexaStack.Controllers
 
     IEnumerator StackPlacedCoroutine(GridCell gridCell)
     {
-        updatedCells.Add(gridCell);
+        if (updatedCellSet.Add(gridCell))
+            updatedCells.Add(gridCell);
 
         while (updatedCells.Count > 0)
             yield return CheckForMerge(updatedCells[0]);
@@ -57,11 +59,11 @@ namespace HexaStack.Controllers
     IEnumerator CheckForMerge(GridCell gridCell)
     {
         updatedCells.Remove(gridCell);
+        updatedCellSet.Remove(gridCell);
 
         if (!gridCell.IsOccupied)
             yield break;
 
-        // Does this cell have neighbors?
         List<GridCell> neighborGridCells = GetNeighborGridCells(gridCell);
 
         if (neighborGridCells.Count <= 0)
@@ -70,10 +72,8 @@ namespace HexaStack.Controllers
             yield break;
         }
 
-        // At this point, we have a list of the neighbor grid cells, that are occupied
         Color gridCellTopHexagonColor = gridCell.Stack.GetTopHexagonColor();
 
-        // Do these neighbors have the same top hex color?
         List<GridCell> similarNeighborGridCells = GetSimilarNeighborGridCells(gridCellTopHexagonColor, neighborGridCells.ToArray());
 
         if (similarNeighborGridCells.Count <= 0)
@@ -82,37 +82,27 @@ namespace HexaStack.Controllers
             yield break;
         }
 
-        updatedCells.AddRange(similarNeighborGridCells);
+        foreach (GridCell similarCell in similarNeighborGridCells)
+        {
+            if (updatedCellSet.Add(similarCell))
+                updatedCells.Add(similarCell);
+        }
 
-        // At this point, we have a list of similar neighbors
         List<Hexagon> hexagonsToAdd = GetHexagonsToAdd(gridCellTopHexagonColor, similarNeighborGridCells.ToArray());
 
-        // Remove the hexagons from their stacks
         RemoveHexagonsFromStacks(hexagonsToAdd, similarNeighborGridCells.ToArray());
-
-        // At this point, we have removed the stacks we don't need anymore
-        // We have some free grid cells
 
         MoveHexagons(gridCell, hexagonsToAdd);
 
         yield return new WaitForSeconds(.4615f + (hexagonsToAdd.Count + 1) * .023f);
 
-        // 애니메이션 완료 후 모든 헥사곤 위치를 정확하게 재정렬
         ReorganizeStack(gridCell);
 
-        // We need to merge!
-
-        // Merge everything inside of this cell
-
-        // Is the stack on this cell complete?
-        // Does it have 10 or more similar hexagons?
         yield return CheckForCompleteStack(gridCell, gridCellTopHexagonColor);
 
-        // Update the score after a successful merge
         score++;
         UpdateScoreText();
         
-        // 일반 merge가 성공했을 때도 IncreaseScoreEffect 표시 (Ground 위치에서)
         if (increaseScoreEffectPrefab != null)
         {
             Vector3 groundPosition = gridCell.transform.position.With(y: 0.7f);
@@ -120,9 +110,6 @@ namespace HexaStack.Controllers
         }
         
         AreMovesAvailable();
-
-        // Check the updated cells
-        // Repeat
     }
 
     private List<GridCell> GetNeighborGridCells(GridCell gridCell)
@@ -133,7 +120,6 @@ namespace HexaStack.Controllers
 
         Collider[] neighborGridCellColliders = Physics.OverlapSphere(gridCell.transform.position, 2, gridCellMask);
 
-        // At this point, we have the grid cell collider neighbors
         foreach (Collider gridCellCollider in neighborGridCellColliders)
         {
             GridCell neighborGridCell = gridCellCollider.GetComponent<GridCell>();
@@ -275,7 +261,8 @@ namespace HexaStack.Controllers
             similarHexagons.RemoveAt(0);
         }
 
-        updatedCells.Add(gridCell);
+        if (updatedCellSet.Add(gridCell))
+            updatedCells.Add(gridCell);
 
         yield return new WaitForSeconds(.4615f + (similarHexagonCount + 1) * .023f);
 
