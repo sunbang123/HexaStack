@@ -19,27 +19,6 @@ dependencies {
 // Android Resolver Dependencies End
 **DEPS**}
 
-// Force Kotlin/Coroutines versions to avoid R8 dexing crashes
-configurations.all {
-    resolutionStrategy {
-        force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-reflect:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-parcelize-runtime:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-android-extensions-runtime:1.8.22'
-        force 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3'
-        force 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-        force 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3'
-        force 'com.google.firebase:firebase-common:20.4.2'
-        force 'com.google.firebase:firebase-auth:22.3.1'
-        force 'com.google.firebase:firebase-config:21.6.0'
-        force 'com.google.firebase:firebase-firestore:24.9.1'
-        force 'com.google.firebase:firebase-analytics:21.5.0'
-    }
-}
-
 // Android Resolver Exclusions Start
 android {
   packagingOptions {
